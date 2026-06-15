@@ -1,0 +1,31 @@
+{
+  "name": "anomalithic",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Anomalithic — one open-core, model-agnostic agent runtime to rule them all.",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "anomalithic": "node packages/cli/dist/index.js"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "tsup": "^8.3.5",
+    "turbo": "^2.5.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "@biomejs/biome"]
+  }
+}
