@@ -82,6 +82,9 @@ importers:
         specifier: ^16.4.7
         version: 16.6.1
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
@@ -98,6 +101,9 @@ importers:
         specifier: workspace:*
         version: link:../providers
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
@@ -110,6 +116,9 @@ importers:
 
   packages/hooks:
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
@@ -126,6 +135,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
@@ -138,6 +150,9 @@ importers:
 
   packages/memory:
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
@@ -157,6 +172,9 @@ importers:
         specifier: workspace:*
         version: link:../providers
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
@@ -194,6 +212,9 @@ importers:
         specifier: workspace:*
         version: link:../skills
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
@@ -206,6 +227,9 @@ importers:
 
   packages/providers:
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
@@ -218,6 +242,9 @@ importers:
 
   packages/security:
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
@@ -230,6 +257,9 @@ importers:
 
   packages/skills:
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
