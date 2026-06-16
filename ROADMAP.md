@@ -24,7 +24,8 @@ track forward a notch.
 ## Phase 2 — Teams & endurance
 - [ ] Orchestrator: durable task store, atomic task checkout, dependency graph
 - [ ] Per-agent token/cost budgets with hard stops
-- [ ] Heartbeat + session resume (run for hours/days, survive restarts)
+- [x] Durable sessions + resume (survive restarts) — `SessionStore` + `anomalithic --resume` / `sessions`
+- [ ] Heartbeat loop for fully-unattended multi-hour runs
 - [ ] Worktree-isolated subagents that merge back
 - [ ] Governance gates for risky/outbound actions
 - [ ] Semantic memory recall (libsql / sqlite-vec)

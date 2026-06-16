@@ -1,6 +1,8 @@
 #!/usr/bin/env node
-import { Agent } from "@anomalithic/core";
-import { createProvider } from "@anomalithic/providers";
+import { randomUUID } from "node:crypto";
+import { join } from "node:path";
+import { Agent, type SessionState, SessionStore } from "@anomalithic/core";
+import { type Message, createProvider } from "@anomalithic/providers";
 import { Command } from "commander";
 import { config as loadDotenv } from "dotenv";
 import { attachAds } from "./ads.js";
@@ -30,21 +32,48 @@ async function executePrompt(promptParts: string[], overrides: CliOverrides): Pr
     return;
   }
 
+  const store = new SessionStore(join(process.cwd(), ".anomalithic", "sessions"));
+  let resolvedId = overrides.session;
+  if (overrides.resume && !resolvedId) resolvedId = store.list()[0]?.id;
+  const prior = resolvedId ? store.load(resolvedId) : undefined;
+  const sid = resolvedId ?? randomUUID();
+  const createdAt = prior?.createdAt ?? new Date().toISOString();
+
   const provider = createProvider({ kind: cfg.kind, apiKey: cfg.apiKey, baseUrl: cfg.baseUrl });
-  const agent = new Agent({ provider, model: cfg.model });
+  const userMsg: Message = { role: "user", content: [{ type: "text", text: prompt }] };
+  const input: string | Message[] =
+    prior && prior.messages.length > 0 ? [...prior.messages, userMsg] : prompt;
+
+  const agent = new Agent({
+    provider,
+    model: cfg.model,
+    sessionId: sid,
+    onTurnEnd: (snap) => {
+      const state: SessionState = {
+        id: sid,
+        model: cfg.model,
+        messages: snap.messages,
+        impressions: snap.impressions,
+        turns: snap.turn,
+        createdAt,
+        updatedAt: new Date().toISOString(),
+      };
+      store.save(state);
+    },
+  });
   attachAds(agent.bus, { enabled: cfg.ads });
 
   agent.bus.on("thinking.start", () => process.stderr.write(dim("✦ thinking…\n")));
   agent.bus.on("text", (e) => process.stdout.write(e.text));
 
   try {
-    const result = await agent.run(prompt);
+    const result = await agent.run(input);
     process.stdout.write("\n");
     process.stderr.write(
       dim(
         `\n[${cfg.kind}:${cfg.model}] ${result.turns} turn(s), ` +
           `${result.usage.inputTokens}+${result.usage.outputTokens} tokens, ` +
-          `${result.impressions.length} impression(s)\n`,
+          `${result.impressions.length} impression(s) · session ${sid.slice(0, 8)}\n`,
       ),
     );
   } catch (err) {
@@ -69,6 +98,8 @@ program
   .option("-p, --provider <kind>", "provider: anthropic | openai | mock")
   .option("-m, --model <model>", "model id")
   .option("--ads", "enable thinking-time ads (placeholder in this build)")
+  .option("-s, --session <id>", "continue a named session")
+  .option("--resume", "resume the most recent session")
   .action((promptParts: string[], opts: CliOverrides) => {
     if (!promptParts || promptParts.length === 0) {
       program.help();
@@ -107,5 +138,20 @@ program
   .argument("<command>", "the MCP server command to spawn")
   .argument("[args...]", "arguments passed to the server")
   .action((command: string, args: string[]) => mcpCommand(command, args ?? []));
+
+program
+  .command("sessions")
+  .description("List saved, resumable sessions")
+  .action(() => {
+    const store = new SessionStore(join(process.cwd(), ".anomalithic", "sessions"));
+    const list = store.list();
+    if (list.length === 0) {
+      console.log("No saved sessions. Run with --session <id> to start one.");
+      return;
+    }
+    for (const s of list) {
+      console.log(`${s.id.slice(0, 8)}  ${s.turns} turn(s)  ${dim(s.updatedAt)}`);
+    }
+  });
 
 program.parseAsync(process.argv);

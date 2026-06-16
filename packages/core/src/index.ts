@@ -6,4 +6,9 @@ export {
   type ThinkingImpression,
 } from "./impression.js";
 export { ToolRegistry, type Tool, type ToolContext, type ToolRunResult } from "./tools.js";
-export { Agent, type AgentOptions, type AgentRunResult } from "./agent.js";
+export { Agent, type AgentOptions, type AgentRunResult, type TurnSnapshot } from "./agent.js";
+export {
+  SessionStore,
+  type SessionState,
+  type SessionSummary,
+} from "./session.js";

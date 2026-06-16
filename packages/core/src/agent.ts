@@ -24,6 +24,8 @@ export interface AgentOptions {
   /** HMAC key for signing thinking impressions; generated per-session if omitted. */
   impressionKey?: string;
   bus?: EventBus;
+  /** Called after every turn with a snapshot — use it to persist/resume long runs. */
+  onTurnEnd?: (snapshot: TurnSnapshot) => unknown;
 }
 
 export interface AgentRunResult {
@@ -32,6 +34,13 @@ export interface AgentRunResult {
   turns: number;
   usage: TokenUsage;
   impressions: ThinkingImpression[];
+}
+
+export interface TurnSnapshot {
+  turn: number;
+  messages: Message[];
+  impressions: ThinkingImpression[];
+  usage: TokenUsage;
 }
 
 const DEFAULT_MAX_TURNS = 16;
@@ -83,21 +92,34 @@ export class Agent {
         messages.push({ role: "assistant", content });
         this.bus.emit("turn.end", { turn, stopReason });
 
-        if (stopReason !== "tool_use" || !this.opts.tools) break;
+        const toolUses =
+          stopReason === "tool_use" && this.opts.tools
+            ? content.filter((p): p is ToolUsePart => p.type === "tool_use")
+            : [];
 
-        const toolUses = content.filter((p): p is ToolUsePart => p.type === "tool_use");
-        if (toolUses.length === 0) break;
-
-        const results: ContentPart[] = [];
-        for (const call of toolUses) {
-          const { output, isError } = await this.opts.tools.run(call.name, call.input, {
-            sessionId: this.sessionId,
-            signal,
-          });
-          this.bus.emit("tool.result", { id: call.id, name: call.name, output, isError });
-          results.push({ type: "tool_result", toolUseId: call.id, content: output, isError });
+        if (this.opts.tools && toolUses.length > 0) {
+          const results: ContentPart[] = [];
+          for (const call of toolUses) {
+            const { output, isError } = await this.opts.tools.run(call.name, call.input, {
+              sessionId: this.sessionId,
+              signal,
+            });
+            this.bus.emit("tool.result", { id: call.id, name: call.name, output, isError });
+            results.push({ type: "tool_result", toolUseId: call.id, content: output, isError });
+          }
+          messages.push({ role: "tool", content: results });
         }
-        messages.push({ role: "tool", content: results });
+
+        if (this.opts.onTurnEnd) {
+          await this.opts.onTurnEnd({
+            turn,
+            messages: [...messages],
+            impressions: [...impressions],
+            usage: { ...total },
+          });
+        }
+
+        if (toolUses.length === 0) break;
       }
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));

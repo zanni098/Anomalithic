@@ -4,6 +4,8 @@ export interface CliOverrides {
   provider?: string;
   model?: string;
   ads?: boolean;
+  session?: string;
+  resume?: boolean;
 }
 
 export interface ResolvedConfig {
