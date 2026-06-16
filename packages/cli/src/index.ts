@@ -6,12 +6,12 @@ import { type Message, createProvider } from "@anomalithic/providers";
 import { Command } from "commander";
 import { config as loadDotenv } from "dotenv";
 import { attachAds } from "./ads.js";
-import { mcpCommand, memoryCommand, skillsCommand } from "./commands.js";
+import { mcpCommand, memoryCommand, pluginsCommand, skillsCommand } from "./commands.js";
 import { type CliOverrides, apiKeyEnvVar, loadConfig } from "./config.js";
 
 loadDotenv();
 
-const VERSION = "0.0.0";
+const VERSION = "0.1.0";
 const dim = (s: string) => `\x1b[2m${s}\x1b[0m`;
 
 async function executePrompt(promptParts: string[], overrides: CliOverrides): Promise<void> {
@@ -32,10 +32,13 @@ async function executePrompt(promptParts: string[], overrides: CliOverrides): Pr
     return;
   }
 
+  // Only persist a session when one is explicitly requested, so one-shot runs
+  // don't accumulate random session files.
+  const persist = Boolean(overrides.session || overrides.resume);
   const store = new SessionStore(join(process.cwd(), ".anomalithic", "sessions"));
   let resolvedId = overrides.session;
   if (overrides.resume && !resolvedId) resolvedId = store.list()[0]?.id;
-  const prior = resolvedId ? store.load(resolvedId) : undefined;
+  const prior = persist && resolvedId ? store.load(resolvedId) : undefined;
   const sid = resolvedId ?? randomUUID();
   const createdAt = prior?.createdAt ?? new Date().toISOString();
 
@@ -48,18 +51,20 @@ async function executePrompt(promptParts: string[], overrides: CliOverrides): Pr
     provider,
     model: cfg.model,
     sessionId: sid,
-    onTurnEnd: (snap) => {
-      const state: SessionState = {
-        id: sid,
-        model: cfg.model,
-        messages: snap.messages,
-        impressions: snap.impressions,
-        turns: snap.turn,
-        createdAt,
-        updatedAt: new Date().toISOString(),
-      };
-      store.save(state);
-    },
+    onTurnEnd: persist
+      ? (snap) => {
+          const state: SessionState = {
+            id: sid,
+            model: cfg.model,
+            messages: snap.messages,
+            impressions: snap.impressions,
+            turns: snap.turn,
+            createdAt,
+            updatedAt: new Date().toISOString(),
+          };
+          store.save(state);
+        }
+      : undefined,
   });
   attachAds(agent.bus, { enabled: cfg.ads });
 
@@ -73,7 +78,7 @@ async function executePrompt(promptParts: string[], overrides: CliOverrides): Pr
       dim(
         `\n[${cfg.kind}:${cfg.model}] ${result.turns} turn(s), ` +
           `${result.usage.inputTokens}+${result.usage.outputTokens} tokens, ` +
-          `${result.impressions.length} impression(s) · session ${sid.slice(0, 8)}\n`,
+          `${result.impressions.length} impression(s)${persist ? ` · session ${sid.slice(0, 8)}` : ""}\n`,
       ),
     );
   } catch (err) {
@@ -131,6 +136,12 @@ program
   .argument("<action>", "list | recall")
   .argument("[query...]", "query text for recall")
   .action((action: string, query: string[]) => memoryCommand(action, query ?? []));
+
+program
+  .command("plugins")
+  .description("Discover installed plugins (skills + MCP servers + hooks)")
+  .argument("[dirs...]", "directories to search (defaults to .anomalithic/plugins)")
+  .action((dirs: string[]) => pluginsCommand(dirs ?? []));
 
 program
   .command("mcp")

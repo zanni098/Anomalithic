@@ -72,6 +72,9 @@ importers:
       '@anomalithic/memory':
         specifier: workspace:*
         version: link:../memory
+      '@anomalithic/plugins':
+        specifier: workspace:*
+        version: link:../plugins
       '@anomalithic/providers':
         specifier: workspace:*
         version: link:../providers
@@ -103,6 +106,21 @@ importers:
       '@anomalithic/providers':
         specifier: workspace:*
         version: link:../providers
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.5
+        version: 3.2.6(@types/node@22.19.21)
+
+  packages/gateway:
     devDependencies:
       '@types/node':
         specifier: ^22.10.0
@@ -228,6 +246,28 @@ importers:
         specifier: ^3.0.5
         version: 3.2.6(@types/node@22.19.21)
 
+  packages/plugins:
+    dependencies:
+      '@anomalithic/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@anomalithic/skills':
+        specifier: workspace:*
+        version: link:../skills
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.5
+        version: 3.2.6(@types/node@22.19.21)
+
   packages/providers:
     devDependencies:
       '@types/node':
@@ -259,6 +299,25 @@ importers:
         version: 3.2.6(@types/node@22.19.21)
 
   packages/skills:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.21
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.5
+        version: 3.2.6(@types/node@22.19.21)
+
+  services/ads-api:
+    dependencies:
+      '@anomalithic/core':
+        specifier: workspace:*
+        version: link:../../packages/core
     devDependencies:
       '@types/node':
         specifier: ^22.10.0

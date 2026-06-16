@@ -89,7 +89,7 @@ export default function Product() {
                 <span className="p">$</span> anomalithic run &quot;explain MCP in one line&quot; --ads
               </div>
               <div className="think">✦ thinking…</div>
-              <div className="ad">💡 Your ad here while agents think — anomalithic.dev/ads</div>
+              <div className="ad">💡 Your ad here while agents think — anomalithic.vercel.app/ads</div>
               <div>MCP is an open protocol that lets agents call external tools and</div>
               <div>data sources over a uniform JSON-RPC interface.</div>
               <div className="think">[anthropic:claude-sonnet-4-6] 1 turn · 1 signed impression</div>

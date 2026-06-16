@@ -9,6 +9,18 @@ export interface OrchestratorOptions {
   budget?: Budget;
 }
 
+export interface HeartbeatOptions {
+  intervalMs?: number;
+  maxIdleTicks?: number;
+  concurrency?: number;
+  signal?: AbortSignal;
+  onTick?: (info: { tick: number; ran: number; pending: number }) => void;
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /** Drives a team of agents through a dependency-ordered task queue under budget. */
 export class Orchestrator {
   private readonly budget: BudgetTracker;
@@ -27,6 +39,38 @@ export class Orchestrator {
       }
       if (batch.length === 0) break;
       await Promise.all(batch.map((task) => this.runOne(task)));
+    }
+    return this.opts.store.list();
+  }
+
+  /**
+   * Long-running loop for unattended work: drains ready tasks each tick, waits,
+   * then keeps picking up newly-added tasks until idle for `maxIdleTicks`
+   * (or aborted, or over budget). This is what lets a project run for hours/days.
+   */
+  async runHeartbeat(opts: HeartbeatOptions = {}): Promise<Task[]> {
+    const intervalMs = opts.intervalMs ?? 1000;
+    const maxIdle = opts.maxIdleTicks ?? 3;
+    const concurrency = opts.concurrency ?? 2;
+    let idle = 0;
+    let tick = 0;
+
+    const finished = () =>
+      this.opts.store.list().filter((t) => t.status === "completed" || t.status === "failed")
+        .length;
+
+    while (!this.budget.exceeded()) {
+      if (opts.signal?.aborted) break;
+      tick += 1;
+      const before = finished();
+      await this.runToCompletion(concurrency);
+      const ran = finished() - before;
+      const pending = this.opts.store.list().filter((t) => t.status === "pending").length;
+      opts.onTick?.({ tick, ran, pending });
+      if (ran === 0) idle += 1;
+      else idle = 0;
+      if (idle >= maxIdle) break;
+      await delay(intervalMs);
     }
     return this.opts.store.list();
   }

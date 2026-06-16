@@ -9,7 +9,7 @@
 [![CI](https://github.com/zanni098/Anomalithic/actions/workflows/ci.yml/badge.svg)](https://github.com/zanni098/Anomalithic/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
-![Models](https://img.shields.io/badge/models-Claude%20·%20GPT%20·%20Llama%20·%20Ollama-59e6c7)
+![Models](https://img.shields.io/badge/models-Claude%20·%20GPT%20·%20Llama%20·%20Ollama-b8502d)
 
 <a href="https://anomalithic.vercel.app"><img src="./docs/media/home.png" alt="Anomalithic — one agent to rule them all" width="900" /></a>
 
@@ -70,7 +70,7 @@ window mints one signed impression:
 ```console
 $ anomalithic run "explain MCP" --ads
 ✦ thinking…
-💡 Your ad here while agents think — https://anomalithic.dev/ads
+💡 Your ad here while agents think — https://anomalithic.vercel.app/ads
 MCP is an open protocol that lets agents call external tools and data
 sources over a uniform JSON-RPC interface.
 [anthropic:claude-sonnet-4-6] 1 turn(s), 10+5 tokens, 1 impression(s)

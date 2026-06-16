@@ -37,4 +37,18 @@ describe("Orchestrator", () => {
     expect(statuses.filter((s) => s === "completed")).toHaveLength(1);
     expect(statuses.filter((s) => s === "pending")).toHaveLength(1);
   });
+
+  it("runHeartbeat drains ready tasks then stops when idle", async () => {
+    const store = new TaskStore();
+    store.create({ title: "A", prompt: "do a" });
+    const ran: number[] = [];
+    const orchestrator = new Orchestrator({ store, makeAgent: () => makeAgent() });
+    const tasks = await orchestrator.runHeartbeat({
+      intervalMs: 5,
+      maxIdleTicks: 1,
+      onTick: (i) => ran.push(i.ran),
+    });
+    expect(tasks.every((t) => t.status === "completed")).toBe(true);
+    expect(ran[0]).toBe(1);
+  });
 });

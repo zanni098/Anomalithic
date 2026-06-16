@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { McpClient, StdioTransport } from "@anomalithic/mcp";
 import { FileMemoryStore, recall } from "@anomalithic/memory";
+import { discoverPlugins, loadPluginSkills } from "@anomalithic/plugins";
 import { discoverSkills } from "@anomalithic/skills";
 
 const dim = (s: string) => `\x1b[2m${s}\x1b[0m`;
@@ -39,6 +40,25 @@ export async function memoryCommand(action: string, query: string[]): Promise<vo
   }
   console.error(`Unknown memory action "${action}" (use: list | recall <query>)`);
   process.exitCode = 1;
+}
+
+/** `anomalithic plugins [dirs...]` — discover installed plugins and what they bundle. */
+export async function pluginsCommand(dirs: string[]): Promise<void> {
+  const search = dirs.length > 0 ? dirs : [join(process.cwd(), ".anomalithic", "plugins")];
+  const plugins = await discoverPlugins(search);
+  if (plugins.length === 0) {
+    console.log(`No plugins found under: ${search.join(", ")}`);
+    return;
+  }
+  for (const p of plugins) {
+    const skills = await loadPluginSkills(p);
+    const mcp = p.manifest.mcpServers?.length ?? 0;
+    const hooks = p.manifest.hooks?.length ?? 0;
+    console.log(
+      `◆ ${p.manifest.name}@${p.manifest.version ?? "0.0.0"}  ${dim(p.manifest.description ?? "")}`,
+    );
+    console.log(dim(`   ${skills.length} skill(s) · ${mcp} mcp · ${hooks} hook(s)`));
+  }
 }
 
 /** `anomalithic mcp <command> [args...]` — connect to an MCP server, list tools. */

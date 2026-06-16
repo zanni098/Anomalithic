@@ -12,8 +12,8 @@ interface PlaceholderAd {
 }
 
 const PLACEHOLDER_ADS: PlaceholderAd[] = [
-  { intro: "Your ad here while agents think", url: "https://anomalithic.dev/ads" },
-  { intro: "Watchers earn 50% of ad revenue", url: "https://anomalithic.dev/earn" },
+  { intro: "Your ad here while agents think", url: "https://anomalithic.vercel.app/ads" },
+  { intro: "Watchers earn 50% of ad revenue", url: "https://anomalithic.vercel.app/earn" },
 ];
 
 const dim = (s: string) => `\x1b[2m${s}\x1b[0m`;
