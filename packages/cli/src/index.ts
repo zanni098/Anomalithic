@@ -200,6 +200,27 @@ program
   .action((opts: CliOverrides) => interactiveChat(opts));
 
 program
+  .command("tui")
+  .description("Full-screen interactive terminal UI (Ink)")
+  .option("-p, --provider <kind>", "provider: anthropic | openai | mock")
+  .option("-m, --model <model>", "model id")
+  .option("--ads", "show thinking-time ads")
+  .action(async (opts: CliOverrides) => {
+    const cfg = loadConfig(opts);
+    const keyVar = apiKeyEnvVar(cfg.kind);
+    if (keyVar && !cfg.apiKey) {
+      console.error(
+        `Missing API key for provider "${cfg.kind}". Set ${keyVar} (copy .env.example to .env).`,
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const provider = createProvider({ kind: cfg.kind, apiKey: cfg.apiKey, baseUrl: cfg.baseUrl });
+    const { runTui } = await import("@anomalithic/tui");
+    await runTui({ provider, model: cfg.model, ads: cfg.ads });
+  });
+
+program
   .command("models")
   .description("Show the configured provider and model")
   .action(() => {

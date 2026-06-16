@@ -27,7 +27,7 @@ track forward a notch.
 - [x] Durable sessions + resume (survive restarts) — `SessionStore` + `anomalithic --resume` / `sessions`
 - [x] Heartbeat loop for unattended multi-hour runs — `Orchestrator.runHeartbeat()`
 - [x] Plugin system — `@anomalithic/plugins` (bundles skills + MCP + hooks) + `anomalithic plugins`
-- [x] Interactive `chat` mode (streaming, session-backed) — full-screen Ink TUI still queued
+- [x] Interactive `chat` mode + full-screen **Ink TUI** (`anomalithic tui`)
 - [ ] Worktree-isolated subagents that merge back
 - [ ] Governance gates for risky/outbound actions
 - [ ] Semantic memory recall (libsql / sqlite-vec)

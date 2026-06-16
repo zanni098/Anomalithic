@@ -21,6 +21,7 @@
     "@anomalithic/mcp": "workspace:*",
     "@anomalithic/plugins": "workspace:*",
     "@anomalithic/skills": "workspace:*",
+    "@anomalithic/tui": "workspace:*",
     "commander": "^13.0.0",
     "dotenv": "^16.4.7"
   },
