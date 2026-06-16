@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { randomUUID } from "node:crypto";
 import { join } from "node:path";
+import { createInterface } from "node:readline";
 import { Agent, type SessionState, SessionStore } from "@anomalithic/core";
 import { type Message, createProvider } from "@anomalithic/providers";
 import { Command } from "commander";
@@ -88,6 +89,81 @@ async function executePrompt(promptParts: string[], overrides: CliOverrides): Pr
   }
 }
 
+async function interactiveChat(overrides: CliOverrides): Promise<void> {
+  const cfg = loadConfig(overrides);
+  const keyVar = apiKeyEnvVar(cfg.kind);
+  if (keyVar && !cfg.apiKey) {
+    console.error(
+      `Missing API key for provider "${cfg.kind}". Set ${keyVar} (copy .env.example to .env).`,
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  const provider = createProvider({ kind: cfg.kind, apiKey: cfg.apiKey, baseUrl: cfg.baseUrl });
+  const store = new SessionStore(join(process.cwd(), ".anomalithic", "sessions"));
+  let resolvedId = overrides.session;
+  if (overrides.resume && !resolvedId) resolvedId = store.list()[0]?.id;
+  const prior = resolvedId ? store.load(resolvedId) : undefined;
+  const sid = resolvedId ?? randomUUID();
+  const createdAt = prior?.createdAt ?? new Date().toISOString();
+  let history: Message[] = prior?.messages ?? [];
+
+  console.error(
+    dim(
+      `Anomalithic chat — ${cfg.kind}:${cfg.model} · session ${sid.slice(0, 8)} · type /exit to quit`,
+    ),
+  );
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+
+  const ask = () => {
+    rl.question("\n› ", async (line) => {
+      const text = line.trim();
+      if (text === "/exit" || text === "/quit") {
+        rl.close();
+        return;
+      }
+      if (!text) {
+        ask();
+        return;
+      }
+      history = [...history, { role: "user", content: [{ type: "text", text }] }];
+      const agent = new Agent({
+        provider,
+        model: cfg.model,
+        sessionId: sid,
+        onTurnEnd: (snap) => {
+          history = snap.messages;
+          store.save({
+            id: sid,
+            model: cfg.model,
+            messages: snap.messages,
+            impressions: snap.impressions,
+            turns: snap.turn,
+            createdAt,
+            updatedAt: new Date().toISOString(),
+          });
+        },
+      });
+      if (cfg.ads) {
+        agent.bus.on("thinking.start", () =>
+          process.stdout.write(dim("💡 anomalithic.vercel.app/earn\n")),
+        );
+      }
+      agent.bus.on("thinking.start", () => process.stdout.write(dim("✦ thinking…\n")));
+      agent.bus.on("text", (e) => process.stdout.write(e.text));
+      try {
+        await agent.run(history);
+        process.stdout.write("\n");
+      } catch (err) {
+        console.error(`\nError: ${err instanceof Error ? err.message : String(err)}`);
+      }
+      ask();
+    });
+  };
+  ask();
+}
+
 const program = new Command();
 program
   .name("anomalithic")
@@ -112,6 +188,16 @@ program
     }
     return executePrompt(promptParts, opts);
   });
+
+program
+  .command("chat")
+  .description("Interactive multi-turn session (streaming, session-backed)")
+  .option("-p, --provider <kind>", "provider: anthropic | openai | mock")
+  .option("-m, --model <model>", "model id")
+  .option("--ads", "show thinking-time ads")
+  .option("-s, --session <id>", "continue a named session")
+  .option("--resume", "resume the most recent session")
+  .action((opts: CliOverrides) => interactiveChat(opts));
 
 program
   .command("models")

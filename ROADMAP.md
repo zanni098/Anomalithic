@@ -25,7 +25,9 @@ track forward a notch.
 - [ ] Orchestrator: durable task store, atomic task checkout, dependency graph
 - [ ] Per-agent token/cost budgets with hard stops
 - [x] Durable sessions + resume (survive restarts) — `SessionStore` + `anomalithic --resume` / `sessions`
-- [ ] Heartbeat loop for fully-unattended multi-hour runs
+- [x] Heartbeat loop for unattended multi-hour runs — `Orchestrator.runHeartbeat()`
+- [x] Plugin system — `@anomalithic/plugins` (bundles skills + MCP + hooks) + `anomalithic plugins`
+- [x] Interactive `chat` mode (streaming, session-backed) — full-screen Ink TUI still queued
 - [ ] Worktree-isolated subagents that merge back
 - [ ] Governance gates for risky/outbound actions
 - [ ] Semantic memory recall (libsql / sqlite-vec)
@@ -40,7 +42,7 @@ track forward a notch.
 
 ## Phase 4 — Reach
 - [ ] Tauri desktop apps: Windows, Linux, macOS
-- [ ] Messaging gateway (openclaw-style): WhatsApp/Telegram/Slack/Discord/Signal/iMessage
+- [x] Messaging gateway (openclaw-style) — `@anomalithic/gateway` with Telegram + mock adapters (Slack/Discord/WhatsApp/Signal next)/iMessage
 - [ ] Scheduled routines (cron)
 - [ ] Advertiser analytics
 
