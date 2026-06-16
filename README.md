@@ -1,38 +1,64 @@
-# Anomalithic
+<div align="center">
 
-**One open-core, model-agnostic agent runtime to rule them all.**
+# ⬛ Anomalithic
+
+### One open-core, model-agnostic agent runtime to rule them all.
+
+[**Live site →**](https://anomalithic.vercel.app) &nbsp;·&nbsp; [Architecture](./ARCHITECTURE.md) &nbsp;·&nbsp; [Roadmap](./ROADMAP.md) &nbsp;·&nbsp; [Ad spec](./docs/specs/thinking-impressions.md)
+
+[![CI](https://github.com/zanni098/Anomalithic/actions/workflows/ci.yml/badge.svg)](https://github.com/zanni098/Anomalithic/actions/workflows/ci.yml)
+![License](https://img.shields.io/badge/license-Apache--2.0-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
+![Models](https://img.shields.io/badge/models-Claude%20·%20GPT%20·%20Llama%20·%20Ollama-59e6c7)
+
+<a href="https://anomalithic.vercel.app"><img src="./docs/media/hero.png" alt="Anomalithic — one agent to rule them all" width="900" /></a>
+
+</div>
+
+---
 
 Anomalithic is an AI agent runtime designed to match the capability of tools like
-Claude Code while staying provider-agnostic and self-hostable. It runs for minutes
-or days, spawns teams of sub-agents, speaks MCP, loads Claude *and* Codex skills,
-fires lifecycle hooks, remembers across sessions, reaches you on any messaging
-channel — and funds itself through a thinking-time ad network paid out in
-stablecoin.
+Claude Code while staying **provider-agnostic** and **self-hostable**. It runs for
+minutes or days, spawns teams of sub-agents, speaks MCP, loads **Claude *and* Codex
+skills**, fires lifecycle hooks, remembers across sessions — and funds itself with a
+thinking-time ad network that pays watchers **50/50** in stablecoin.
 
-> Status: **Phase 0 (Foundations).** The provider layer, agent loop, signed
-> thinking-impressions, and CLI are real and tested. Multi-agent, ads, desktop
-> apps, and the messaging gateway are on the [roadmap](./ROADMAP.md).
+The name is *anomaly* + *-lithic* (stone / monolith): the one monolithic agent.
 
-## Why
+## ✦ The killer feature — get paid while agents think
 
-The name is *anomaly* + *-lithic* (stone / monolith): the one monolithic agent,
-distilling the best ideas from a generation of agent harnesses into a single,
-coherent runtime. See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full design and
-the projects that inspired it.
-
-## The killer feature: thinking-time ads (50/50)
+<img src="./docs/media/earn.png" alt="Thinking-time ads — 50/50 split" width="900" />
 
 Advertisers pay a monthly fee to place a small link + short blurb that appears
 **only while the agent is thinking**. Watchers earn for those impressions, split
-**50/50** between the platform and the watcher, paid in stablecoin (USDC on Base).
-Ads are always toggleable.
+**50/50** between the platform and the watcher, paid in **USDC on Base**. Always
+toggleable.
 
-The trust anchor already exists in this build: every thinking window mints a
-**runtime-signed impression** (`packages/core/src/impression.ts`) that the future
-ad ledger will redeem — impressions can be minted only by the runtime, never
-spoofed by a client timer. See [docs/specs/thinking-impressions.md](./docs/specs/thinking-impressions.md).
+The trust anchor already ships: every thinking window mints a **runtime-signed
+impression** (`packages/core/src/impression.ts`) that the ad ledger verifies before
+crediting a watcher — impressions can only be minted by the runtime, never spoofed by
+a client timer. See the frozen [impression spec](./docs/specs/thinking-impressions.md).
 
-## Quickstart
+## ✦ The whole agent, not a wrapper
+
+<img src="./docs/media/capabilities.png" alt="Capabilities" width="900" />
+
+Nine focused, open-source packages compose into one capable agent — each tested,
+typed, and small enough to read in a sitting.
+
+| Package | What it does |
+|---|---|
+| `@anomalithic/providers` | Any model — Anthropic, OpenAI, OpenRouter, Ollama, or any OpenAI-compatible endpoint |
+| `@anomalithic/core` | Agent loop, typed event bus, **signed thinking-impressions**, tool registry |
+| `@anomalithic/mcp` | Model Context Protocol stdio client + tool adapter |
+| `@anomalithic/skills` | Loads Claude `SKILL.md` **and** Codex `AGENTS.md` into one skill system |
+| `@anomalithic/hooks` | Lifecycle hooks: SessionStart, Pre/PostToolUse, Stop, Thinking |
+| `@anomalithic/orchestrator` | Durable task store, atomic checkout, dependency graph, budgets — run for hours/days |
+| `@anomalithic/memory` | File-backed cross-session memory + recall |
+| `@anomalithic/security` | Secret redaction, permission policy, path sandbox, audit log |
+| `@anomalithic/cli` | The `anomalithic` command-line interface |
+
+## ✦ Quickstart
 
 ```bash
 pnpm install
@@ -50,27 +76,33 @@ ANOMALITHIC_PROVIDER=openai OPENAI_BASE_URL=http://localhost:11434/v1 \
   node packages/cli/dist/index.js run -m llama3.1 "hi"
 ```
 
-## Workspace layout
+## ✦ Platforms
 
-| Package | Purpose | License |
-|---|---|---|
-| `@anomalithic/providers` | Model-agnostic LLM layer (Anthropic, OpenAI-compatible, mock) | OSS |
-| `@anomalithic/core` | Agent loop, typed event bus, signed thinking-impressions, tools | OSS |
-| `@anomalithic/cli` | The `anomalithic` command-line interface | OSS |
+- **CLI** — `anomalithic run "…"`, scriptable and pipe-friendly _(shipping)_
+- **TUI** — full-screen interactive sessions _(roadmap)_
+- **Desktop installers** — native Windows `.msi`, macOS `.dmg`, Linux `.deb` / AppImage via the Tauri release workflow _(roadmap)_
+- **Messaging gateway** — WhatsApp, Telegram, Slack, Discord, Signal _(roadmap)_
+- **Mobile** — _(later)_
 
-The ads marketplace, payout wallet, and advertiser portal are proprietary
-services that build on these open packages. See [LICENSING.md](./LICENSING.md).
+See the full plan in [ROADMAP.md](./ROADMAP.md).
 
-## Development
+## ✦ Develop
 
 ```bash
 pnpm build        # build all packages (turbo)
-pnpm test         # run all tests (vitest)
+pnpm test         # run all tests (vitest) — 11 suites
 pnpm typecheck    # tsc --noEmit across the workspace
 pnpm lint         # biome check
 ```
 
-## License
+The website lives in [`apps/web`](./apps/web) (Next.js, deployed to Vercel).
 
-Open-core. The packages above are Apache-2.0 (see [LICENSE](./LICENSE)); the hosted
-ad/payout services are proprietary. Details in [LICENSING.md](./LICENSING.md).
+## ✦ License
+
+**Open-core.** The runtime packages and the desktop shell are Apache-2.0
+(see [LICENSE](./LICENSE)); the hosted ad marketplace, payout wallet, and advertiser
+portal are proprietary. Details in [LICENSING.md](./LICENSING.md).
+
+<div align="center">
+<sub>Built in the open · <a href="https://anomalithic.vercel.app">anomalithic.vercel.app</a></sub>
+</div>

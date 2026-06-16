@@ -5,6 +5,11 @@ coverage/
 *.log
 *.tsbuildinfo
 
+# next.js / vercel
+.next/
+out/
+.vercel
+
 # env / secrets
 .env
 .env.*
