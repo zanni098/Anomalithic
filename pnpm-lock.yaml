@@ -57,9 +57,18 @@ importers:
       '@anomalithic/core':
         specifier: workspace:*
         version: link:../core
+      '@anomalithic/mcp':
+        specifier: workspace:*
+        version: link:../mcp
+      '@anomalithic/memory':
+        specifier: workspace:*
+        version: link:../memory
       '@anomalithic/providers':
         specifier: workspace:*
         version: link:../providers
+      '@anomalithic/skills':
+        specifier: workspace:*
+        version: link:../skills
       commander:
         specifier: ^13.0.0
         version: 13.1.0
@@ -141,6 +150,43 @@ importers:
       '@anomalithic/providers':
         specifier: workspace:*
         version: link:../providers
+    devDependencies:
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.5
+        version: 3.2.6(@types/node@22.19.21)
+
+  packages/os:
+    dependencies:
+      '@anomalithic/core':
+        specifier: workspace:*
+        version: link:../core
+      '@anomalithic/hooks':
+        specifier: workspace:*
+        version: link:../hooks
+      '@anomalithic/mcp':
+        specifier: workspace:*
+        version: link:../mcp
+      '@anomalithic/memory':
+        specifier: workspace:*
+        version: link:../memory
+      '@anomalithic/orchestrator':
+        specifier: workspace:*
+        version: link:../orchestrator
+      '@anomalithic/providers':
+        specifier: workspace:*
+        version: link:../providers
+      '@anomalithic/security':
+        specifier: workspace:*
+        version: link:../security
+      '@anomalithic/skills':
+        specifier: workspace:*
+        version: link:../skills
     devDependencies:
       tsup:
         specifier: ^8.3.5

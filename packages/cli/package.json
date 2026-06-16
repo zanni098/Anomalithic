@@ -17,6 +17,9 @@
   "dependencies": {
     "@anomalithic/core": "workspace:*",
     "@anomalithic/providers": "workspace:*",
+    "@anomalithic/memory": "workspace:*",
+    "@anomalithic/mcp": "workspace:*",
+    "@anomalithic/skills": "workspace:*",
     "commander": "^13.0.0",
     "dotenv": "^16.4.7"
   },

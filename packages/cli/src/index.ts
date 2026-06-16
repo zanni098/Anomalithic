@@ -4,6 +4,7 @@ import { createProvider } from "@anomalithic/providers";
 import { Command } from "commander";
 import { config as loadDotenv } from "dotenv";
 import { attachAds } from "./ads.js";
+import { mcpCommand, memoryCommand, skillsCommand } from "./commands.js";
 import { type CliOverrides, apiKeyEnvVar, loadConfig } from "./config.js";
 
 loadDotenv();
@@ -86,5 +87,25 @@ program
     if (cfg.baseUrl) console.log(`baseUrl:  ${cfg.baseUrl}`);
     console.log(`ads:      ${cfg.ads ? "on" : "off"}`);
   });
+
+program
+  .command("skills")
+  .description("Discover Claude SKILL.md and Codex AGENTS.md skills")
+  .argument("[dirs...]", "directories to search (defaults to the current directory)")
+  .action((dirs: string[]) => skillsCommand(dirs ?? []));
+
+program
+  .command("memory")
+  .description("Cross-session memory: list, or recall <query>")
+  .argument("<action>", "list | recall")
+  .argument("[query...]", "query text for recall")
+  .action((action: string, query: string[]) => memoryCommand(action, query ?? []));
+
+program
+  .command("mcp")
+  .description("Connect to an MCP stdio server and list its tools")
+  .argument("<command>", "the MCP server command to spawn")
+  .argument("[args...]", "arguments passed to the server")
+  .action((command: string, args: string[]) => mcpCommand(command, args ?? []));
 
 program.parseAsync(process.argv);
