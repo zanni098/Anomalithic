@@ -11,7 +11,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
 ![Models](https://img.shields.io/badge/models-Claude%20·%20GPT%20·%20Llama%20·%20Ollama-59e6c7)
 
-<a href="https://anomalithic.vercel.app"><img src="./docs/media/hero.png" alt="Anomalithic — one agent to rule them all" width="900" /></a>
+<a href="https://anomalithic.vercel.app"><img src="./docs/media/home.png" alt="Anomalithic — one agent to rule them all" width="900" /></a>
 
 </div>
 
@@ -39,11 +39,16 @@ impression** (`packages/core/src/impression.ts`) that the ad ledger verifies bef
 crediting a watcher — impressions can only be minted by the runtime, never spoofed by
 a client timer. See the frozen [impression spec](./docs/specs/thinking-impressions.md).
 
+## ✦ Build agents visually — drag, drop, wire, export
+
+<a href="https://anomalithic.vercel.app/builder"><img src="./docs/media/builder.png" alt="Drag-and-drop agent builder" width="900" /></a>
+
+Compose providers, prompts, tools, code, and sub-agents on a canvas, wire them
+together, and export an Anomalithic agent definition — **[try it live](https://anomalithic.vercel.app/builder)**. No code required, but code is a first-class node.
+
 ## ✦ The whole agent, not a wrapper
 
-<img src="./docs/media/capabilities.png" alt="Capabilities" width="900" />
-
-Nine focused, open-source packages compose into one capable agent — each tested,
+Ten focused, open-source packages compose into one capable agent — each tested,
 typed, and small enough to read in a sitting.
 
 | Package | What it does |
@@ -56,7 +61,20 @@ typed, and small enough to read in a sitting.
 | `@anomalithic/orchestrator` | Durable task store, atomic checkout, dependency graph, budgets — run for hours/days |
 | `@anomalithic/memory` | File-backed cross-session memory + recall |
 | `@anomalithic/security` | Secret redaction, permission policy, path sandbox, audit log |
-| `@anomalithic/cli` | The `anomalithic` command-line interface |
+| `@anomalithic/os` | The agentic-OS **kernel** that composes every package into one runtime |
+| `@anomalithic/cli` | The `anomalithic` CLI — `run`, `skills`, `memory`, `mcp` |
+
+The product, running — a quiet ad shows only during the thinking window, and each
+window mints one signed impression:
+
+```console
+$ anomalithic run "explain MCP" --ads
+✦ thinking…
+💡 Your ad here while agents think — https://anomalithic.dev/ads
+MCP is an open protocol that lets agents call external tools and data
+sources over a uniform JSON-RPC interface.
+[anthropic:claude-sonnet-4-6] 1 turn(s), 10+5 tokens, 1 impression(s)
+```
 
 ## ✦ Quickstart
 
