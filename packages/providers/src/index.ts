@@ -9,7 +9,10 @@ import { MockProvider } from "./mock.js";
 import { OpenAIProvider } from "./openai.js";
 import type { Provider } from "./types.js";
 
-export type ProviderKind = "anthropic" | "openai" | "mock";
+export type ProviderKind = "anthropic" | "openai" | "google" | "mock";
+
+/** Google Gemini speaks the OpenAI-compatible protocol at this base URL. */
+const GOOGLE_OPENAI_BASE = "https://generativelanguage.googleapis.com/v1beta/openai";
 
 export interface ProviderConfig {
   kind: ProviderKind;
@@ -24,6 +27,11 @@ export function createProvider(config: ProviderConfig): Provider {
       return new AnthropicProvider({ apiKey: config.apiKey ?? "", baseUrl: config.baseUrl });
     case "openai":
       return new OpenAIProvider({ apiKey: config.apiKey ?? "", baseUrl: config.baseUrl });
+    case "google":
+      return new OpenAIProvider({
+        apiKey: config.apiKey ?? "",
+        baseUrl: config.baseUrl ?? GOOGLE_OPENAI_BASE,
+      });
     case "mock":
       return new MockProvider();
     default: {

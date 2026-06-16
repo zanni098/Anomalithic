@@ -28,6 +28,9 @@ track forward a notch.
 - [x] Heartbeat loop for unattended multi-hour runs — `Orchestrator.runHeartbeat()`
 - [x] Plugin system — `@anomalithic/plugins` (bundles skills + MCP + hooks) + `anomalithic plugins`
 - [x] Interactive `chat` mode + full-screen **Ink TUI** (`anomalithic tui`)
+- [x] Google **Gemini** provider (OpenAI-compatible) — verified live
+- [x] Local HTTP runtime API (`anomalithic serve`) — desktop UI calls it
+- [x] Desktop app wired to the runtime via the local API
 - [ ] Worktree-isolated subagents that merge back
 - [ ] Governance gates for risky/outbound actions
 - [ ] Semantic memory recall (libsql / sqlite-vec)

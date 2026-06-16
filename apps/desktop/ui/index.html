@@ -78,9 +78,9 @@
       </header>
       <section class="console" id="log">
         <div class="msg sys">
-          Welcome to Anomalithic Desktop. This is the v0.1 native shell — add a provider key in
-          Settings to start a local agent session. The runtime, MCP, skills, hooks, and memory all
-          run on your machine.
+          Welcome to Anomalithic Desktop. Start the local runtime with
+          <strong> anomalithic serve</strong> (set a provider key in your .env), then chat below —
+          the agent, MCP, skills, hooks, and memory all run on your machine.
         </div>
       </section>
       <form id="composer">
@@ -97,14 +97,29 @@
         log.appendChild(el);
         log.scrollTop = log.scrollHeight;
       }
-      document.getElementById("composer").addEventListener("submit", (e) => {
+      const RUNTIME = "http://127.0.0.1:4517";
+      document.getElementById("composer").addEventListener("submit", async (e) => {
         e.preventDefault();
         const input = e.target.q;
         const value = input.value.trim();
         if (!value) return;
         add("user", value);
         input.value = "";
-        add("sys", "No provider key configured yet. Add one in Settings to run the agent locally.");
+        add("sys", "✦ thinking…");
+        try {
+          const res = await fetch(RUNTIME + "/run", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ prompt: value }),
+          });
+          if (!res.ok) throw new Error("runtime " + res.status);
+          const data = await res.json();
+          log.removeChild(log.lastChild);
+          add("assistant", data.text || "(no output)");
+        } catch (_err) {
+          log.removeChild(log.lastChild);
+          add("sys", "Runtime not reachable. Start it with:  anomalithic serve");
+        }
       });
       (async () => {
         try {

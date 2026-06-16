@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { randomUUID } from "node:crypto";
+import { createServer as createHttpServer } from "node:http";
 import { join } from "node:path";
 import { createInterface } from "node:readline";
 import { Agent, type SessionState, SessionStore } from "@anomalithic/core";
@@ -164,6 +165,72 @@ async function interactiveChat(overrides: CliOverrides): Promise<void> {
   ask();
 }
 
+async function serve(overrides: CliOverrides & { port?: string }): Promise<void> {
+  const cfg = loadConfig(overrides);
+  const keyVar = apiKeyEnvVar(cfg.kind);
+  if (keyVar && !cfg.apiKey) {
+    console.error(
+      `Missing API key for provider "${cfg.kind}". Set ${keyVar} (copy .env.example to .env).`,
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const provider = createProvider({ kind: cfg.kind, apiKey: cfg.apiKey, baseUrl: cfg.baseUrl });
+  const port = Number(overrides.port ?? process.env.ANOMALITHIC_PORT ?? "4517");
+
+  const server = createHttpServer((req, res) => {
+    res.setHeader("access-control-allow-origin", "*");
+    res.setHeader("access-control-allow-headers", "content-type");
+    res.setHeader("access-control-allow-methods", "GET,POST,OPTIONS");
+    if (req.method === "OPTIONS") {
+      res.writeHead(204);
+      res.end();
+      return;
+    }
+    if (req.method === "GET" && req.url === "/health") {
+      res.writeHead(200, { "content-type": "application/json" });
+      res.end(JSON.stringify({ ok: true, provider: cfg.kind, model: cfg.model }));
+      return;
+    }
+    if (req.method === "POST" && req.url === "/run") {
+      let body = "";
+      req.on("data", (chunk) => {
+        body += chunk;
+      });
+      req.on("end", async () => {
+        try {
+          const { prompt } = JSON.parse(body || "{}") as { prompt?: string };
+          if (!prompt) {
+            res.writeHead(400, { "content-type": "application/json" });
+            res.end(JSON.stringify({ error: "prompt required" }));
+            return;
+          }
+          const result = await new Agent({ provider, model: cfg.model }).run(prompt);
+          res.writeHead(200, { "content-type": "application/json" });
+          res.end(
+            JSON.stringify({
+              text: result.text,
+              turns: result.turns,
+              usage: result.usage,
+              impressions: result.impressions.length,
+            }),
+          );
+        } catch (err) {
+          res.writeHead(500, { "content-type": "application/json" });
+          res.end(JSON.stringify({ error: err instanceof Error ? err.message : String(err) }));
+        }
+      });
+      return;
+    }
+    res.writeHead(404);
+    res.end();
+  });
+
+  server.listen(port, "127.0.0.1", () => {
+    console.error(dim(`Anomalithic serve · http://127.0.0.1:${port} · ${cfg.kind}:${cfg.model}`));
+  });
+}
+
 const program = new Command();
 program
   .name("anomalithic")
@@ -219,6 +286,14 @@ program
     const { runTui } = await import("@anomalithic/tui");
     await runTui({ provider, model: cfg.model, ads: cfg.ads });
   });
+
+program
+  .command("serve")
+  .description("Run a local HTTP runtime API (POST /run, GET /health) — used by the desktop app")
+  .option("-p, --provider <kind>", "provider: anthropic | openai | google | mock")
+  .option("-m, --model <model>", "model id")
+  .option("--port <port>", "port (default 4517)")
+  .action((opts: CliOverrides & { port?: string }) => serve(opts));
 
 program
   .command("models")

@@ -9,7 +9,7 @@
 [![CI](https://github.com/zanni098/Anomalithic/actions/workflows/ci.yml/badge.svg)](https://github.com/zanni098/Anomalithic/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
-![Models](https://img.shields.io/badge/models-Claude%20·%20GPT%20·%20Llama%20·%20Ollama-b8502d)
+![Models](https://img.shields.io/badge/models-Claude%20·%20Gemini%20·%20GPT%20·%20Llama%20·%20Ollama-b8502d)
 
 <a href="https://anomalithic.vercel.app"><img src="./docs/media/home.png" alt="Anomalithic — one agent to rule them all" width="900" /></a>
 
@@ -96,7 +96,7 @@ ANOMALITHIC_PROVIDER=openai OPENAI_BASE_URL=http://localhost:11434/v1 \
 
 ## ✦ Platforms
 
-- **CLI** — `anomalithic run "…"` plus `skills`, `memory`, `mcp` subcommands _(shipping)_
+- **CLI + TUI** — `anomalithic run`, `chat`, full-screen `tui`, `serve` (local HTTP runtime), plus `skills` / `memory` / `mcp` / `plugins` _(shipping)_
 - **Desktop app** — Tauri shell ([`apps/desktop`](./apps/desktop)) with a [release pipeline](./.github/workflows/release.yml) that builds native Windows `.msi`, macOS `.dmg`, and Linux `.deb` / AppImage — see [docs/desktop.md](./docs/desktop.md) _(pipeline ready)_
 - **TUI** — full-screen interactive sessions _(roadmap)_
 - **Messaging gateway** — WhatsApp, Telegram, Slack, Discord, Signal _(roadmap)_
