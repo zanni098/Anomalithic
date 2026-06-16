@@ -78,9 +78,9 @@ ANOMALITHIC_PROVIDER=openai OPENAI_BASE_URL=http://localhost:11434/v1 \
 
 ## ✦ Platforms
 
-- **CLI** — `anomalithic run "…"`, scriptable and pipe-friendly _(shipping)_
+- **CLI** — `anomalithic run "…"` plus `skills`, `memory`, `mcp` subcommands _(shipping)_
+- **Desktop app** — Tauri shell ([`apps/desktop`](./apps/desktop)) with a [release pipeline](./.github/workflows/release.yml) that builds native Windows `.msi`, macOS `.dmg`, and Linux `.deb` / AppImage — see [docs/desktop.md](./docs/desktop.md) _(pipeline ready)_
 - **TUI** — full-screen interactive sessions _(roadmap)_
-- **Desktop installers** — native Windows `.msi`, macOS `.dmg`, Linux `.deb` / AppImage via the Tauri release workflow _(roadmap)_
 - **Messaging gateway** — WhatsApp, Telegram, Slack, Discord, Signal _(roadmap)_
 - **Mobile** — _(later)_
 
