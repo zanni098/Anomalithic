@@ -68,12 +68,18 @@ The product, running — a quiet ad shows only during the thinking window, and e
 window mints one signed impression:
 
 ```console
-$ anomalithic run "explain MCP" --ads
+$ anomalithic run -p google "explain MCP in one sentence" --ads
 ✦ thinking…
 💡 Your ad here while agents think — https://anomalithic.vercel.app/ads
-MCP is an open protocol that lets agents call external tools and data
-sources over a uniform JSON-RPC interface.
-[anthropic:claude-sonnet-4-6] 1 turn(s), 10+5 tokens, 1 impression(s)
+MCP (Model Context Protocol) is an open standard that lets AI agents
+call external tools and data sources over a uniform JSON-RPC interface.
+[google:gemini-2.5-flash] 1 turn(s), 12+8 tokens, 1 impression(s)
+
+$ anomalithic serve -p mock
+Anomalithic serve · http://127.0.0.1:4517 · mock:mock
+
+$ curl -s http://127.0.0.1:4517/health
+{"ok":true,"provider":"mock","model":"mock"}
 ```
 
 ## ✦ Quickstart
@@ -94,12 +100,17 @@ ANOMALITHIC_PROVIDER=openai OPENAI_BASE_URL=http://localhost:11434/v1 \
   node packages/cli/dist/index.js run -m llama3.1 "hi"
 ```
 
+## ✦ Desktop app
+
+<img src="./docs/media/desktop.png" alt="Anomalithic Desktop — dark UI with session chat and model selector" width="900" />
+
+Native shell ([`apps/desktop`](./apps/desktop)) — chat with the agent, switch models, browse memory and skills. The UI calls the local `anomalithic serve` runtime so **everything runs on your machine**.  A [release pipeline](./.github/workflows/release.yml) builds `.msi` / `.dmg` / `.deb` / AppImage on every tag.
+
 ## ✦ Platforms
 
-- **CLI + TUI** — `anomalithic run`, `chat`, full-screen `tui`, `serve` (local HTTP runtime), plus `skills` / `memory` / `mcp` / `plugins` _(shipping)_
-- **Desktop app** — Tauri shell ([`apps/desktop`](./apps/desktop)) with a [release pipeline](./.github/workflows/release.yml) that builds native Windows `.msi`, macOS `.dmg`, and Linux `.deb` / AppImage — see [docs/desktop.md](./docs/desktop.md) _(pipeline ready)_
-- **TUI** — full-screen interactive sessions _(roadmap)_
-- **Messaging gateway** — WhatsApp, Telegram, Slack, Discord, Signal _(roadmap)_
+- **CLI + TUI** — `anomalithic run`, `chat`, full-screen `tui`, `serve` (local HTTP runtime API), plus `skills` / `memory` / `mcp` / `plugins` / `sessions`
+- **Desktop app** — Tauri shell with dark UI; runtime sidecar via `anomalithic serve`; release pipeline builds native installers
+- **Messaging gateway** — Telegram, Slack, Discord adapters (WhatsApp / Signal roadmap)
 - **Mobile** — _(later)_
 
 See the full plan in [ROADMAP.md](./ROADMAP.md).
