@@ -1,16 +1,33 @@
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { McpClient, StdioTransport } from "@anomalithic/mcp";
 import { FileMemoryStore, recall } from "@anomalithic/memory";
 import { discoverPlugins, loadPluginSkills } from "@anomalithic/plugins";
-import { discoverSkills } from "@anomalithic/skills";
+import { type Skill, discoverSkills } from "@anomalithic/skills";
 
 const dim = (s: string) => `\x1b[2m${s}\x1b[0m`;
 const memoryDir = () => join(process.cwd(), ".anomalithic", "memory");
 
-/** `anomalithic skills [dirs...]` — discover Claude + Codex skills. */
+// Skills that ship with Anomalithic, discoverable out of the box. Resolved relative
+// to the bundled CLI so `anomalithic skills` lists the built-ins (e.g. loop-engineering)
+// from any directory. The loader silently skips this path if it isn't present.
+const here = dirname(fileURLToPath(import.meta.url));
+const BUILTIN_SKILLS_DIR = join(here, "..", "..", "..", "skills");
+
+/** `anomalithic skills [dirs...]` — discover Claude + Codex skills (plus the built-ins). */
 export async function skillsCommand(dirs: string[]): Promise<void> {
-  const search = dirs.length > 0 ? dirs : [process.cwd()];
-  const skills = await discoverSkills(search);
+  const search = dirs.length > 0 ? dirs : [process.cwd(), BUILTIN_SKILLS_DIR];
+  const discovered = await discoverSkills(search);
+
+  // Dedupe by path so an overlapping cwd + built-in dir don't list a skill twice.
+  const seen = new Set<string>();
+  const skills: Skill[] = [];
+  for (const skill of discovered) {
+    if (seen.has(skill.path)) continue;
+    seen.add(skill.path);
+    skills.push(skill);
+  }
+
   if (skills.length === 0) {
     console.log(`No skills found under: ${search.join(", ")}`);
     return;
