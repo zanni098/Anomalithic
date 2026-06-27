@@ -9,7 +9,7 @@
 [![CI](https://github.com/zanni098/Anomalithic/actions/workflows/ci.yml/badge.svg)](https://github.com/zanni098/Anomalithic/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
-![Models](https://img.shields.io/badge/models-Claude%20·%20Gemini%20·%20GPT%20·%20Llama%20·%20Ollama-b8502d)
+![Models](https://img.shields.io/badge/models-Claude%20·%20Gemini%20·%20GPT%20·%20Llama%20·%20Ollama-d97757)
 
 <a href="https://anomalithic.vercel.app"><img src="./docs/media/home.png" alt="Anomalithic — one agent to rule them all" width="900" /></a>
 
@@ -39,6 +39,27 @@ impression** (`packages/core/src/impression.ts`) that the ad ledger verifies bef
 crediting a watcher — impressions can only be minted by the runtime, never spoofed by
 a client timer. See the frozen [impression spec](./docs/specs/thinking-impressions.md).
 
+## ✦ Loop engineering — built in
+
+> Stop prompting. Start writing loops.
+
+Anomalithic ships the [`loop-engineering`](./skills/loop-engineering) skill out of the
+box. A prompt is you, babysitting every turn. A **loop** takes you out of the chair:
+write the goal, the check, and the stop once — the agent runs the ask–answer–correct
+cycle on its own until the work clears a verified bar.
+
+```console
+$ anomalithic skills
+▣ loop-engineering  stop prompting — write loops that verify themselves
+1 skill(s) · ▣ claude · ▢ codex
+```
+
+The skill covers all three levels — the one-line `/goal` loop, a copy-paste 5-step loop,
+and the 6-part 24/7 system — plus the part that makes or breaks every loop: **honest
+verification** (separate the checker from the maker, check against reality, grade
+adversarially). Also published standalone at
+[zanni098/loop-engineering-skill](https://github.com/zanni098/loop-engineering-skill).
+
 ## ✦ Build agents visually — drag, drop, wire, export
 
 <a href="https://anomalithic.vercel.app/builder"><img src="./docs/media/builder.png" alt="Drag-and-drop agent builder" width="900" /></a>
@@ -56,7 +77,7 @@ typed, and small enough to read in a sitting.
 | `@anomalithic/providers` | Any model — Anthropic, OpenAI, OpenRouter, Ollama, or any OpenAI-compatible endpoint |
 | `@anomalithic/core` | Agent loop, typed event bus, **signed thinking-impressions**, tool registry |
 | `@anomalithic/mcp` | Model Context Protocol stdio client + tool adapter |
-| `@anomalithic/skills` | Loads Claude `SKILL.md` **and** Codex `AGENTS.md` into one skill system |
+| `@anomalithic/skills` | Loads Claude `SKILL.md` **and** Codex `AGENTS.md` into one skill system — ships the built-in [`loop-engineering`](./skills/loop-engineering) skill |
 | `@anomalithic/hooks` | Lifecycle hooks: SessionStart, Pre/PostToolUse, Stop, Thinking |
 | `@anomalithic/orchestrator` | Durable task store, atomic checkout, dependency graph, budgets — run for hours/days |
 | `@anomalithic/memory` | File-backed cross-session memory + recall |
@@ -91,6 +112,9 @@ pnpm build
 # Offline demo (no API key needed):
 node packages/cli/dist/index.js run -p mock "hello"
 
+# List the built-in skills (includes loop-engineering):
+node packages/cli/dist/index.js skills
+
 # Real model — copy .env.example to .env and add a key:
 cp .env.example .env            # set ANTHROPIC_API_KEY or OPENAI_API_KEY
 node packages/cli/dist/index.js run "explain MCP in one sentence"
@@ -102,14 +126,14 @@ ANOMALITHIC_PROVIDER=openai OPENAI_BASE_URL=http://localhost:11434/v1 \
 
 ## ✦ Desktop app
 
-<img src="./docs/media/desktop.png" alt="Anomalithic Desktop — dark UI with session chat and model selector" width="900" />
+<img src="./docs/media/desktop.png" alt="Anomalithic Desktop — Claude Code–style UI with session chat and model selector" width="900" />
 
-Native shell ([`apps/desktop`](./apps/desktop)) — chat with the agent, switch models, browse memory and skills. The UI calls the local `anomalithic serve` runtime so **everything runs on your machine**.  A [release pipeline](./.github/workflows/release.yml) builds `.msi` / `.dmg` / `.deb` / AppImage on every tag.
+Native shell ([`apps/desktop`](./apps/desktop)) — chat with the agent, switch models, browse memory and skills, styled to match the Claude Code aesthetic. The UI calls the local `anomalithic serve` runtime so **everything runs on your machine**.  A [release pipeline](./.github/workflows/release.yml) builds `.msi` / `.dmg` / `.deb` / AppImage on every tag.
 
 ## ✦ Platforms
 
 - **CLI + TUI** — `anomalithic run`, `chat`, full-screen `tui`, `serve` (local HTTP runtime API), plus `skills` / `memory` / `mcp` / `plugins` / `sessions`
-- **Desktop app** — Tauri shell with dark UI; runtime sidecar via `anomalithic serve`; release pipeline builds native installers
+- **Desktop app** — Tauri shell with a Claude Code–style UI; runtime sidecar via `anomalithic serve`; release pipeline builds native installers
 - **Messaging gateway** — Telegram, Slack, Discord adapters (WhatsApp / Signal roadmap)
 - **Mobile** — _(later)_
 
@@ -119,7 +143,7 @@ See the full plan in [ROADMAP.md](./ROADMAP.md).
 
 ```bash
 pnpm build        # build all packages (turbo)
-pnpm test         # run all tests (vitest) — 11 suites
+pnpm test         # run all tests (vitest)
 pnpm typecheck    # tsc --noEmit across the workspace
 pnpm lint         # biome check
 ```
