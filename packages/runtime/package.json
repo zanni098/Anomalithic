@@ -1,5 +1,5 @@
 {
-  "name": "@anomalithic/providers",
+  "name": "@anomalithic/runtime",
   "version": "0.1.0",
   "type": "module",
   "license": "Apache-2.0",
@@ -17,6 +17,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@anomalithic/runtime": "workspace:*"
+    "@anomalithic/impressions": "workspace:*"
   }
 }

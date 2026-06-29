@@ -1,29 +1,31 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  },
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   "files": {
-    "ignore": ["dist", "node_modules", ".turbo", "coverage"]
+    "ignore": [
+      "dist/**",
+      "node_modules/**",
+      ".turbo/**",
+      "**/*.gen.ts",
+      "apps/web/.next/**",
+      "apps/desktop/src-tauri/target/**"
+    ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineWidth": 100
+    "lineWidth": 110
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "suspicious": { "noExplicitAny": "off" },
+      "style": { "noNonNullAssertion": "off" }
     }
   },
   "javascript": {
-    "formatter": {
-      "quoteStyle": "double",
-      "semicolons": "always"
-    }
+    "formatter": { "quoteStyle": "double", "semicolons": "asNeeded" }
   }
 }
