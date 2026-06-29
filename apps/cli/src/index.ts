@@ -5,7 +5,9 @@ import {
   buildProvider,
   resolveDefaultProviderId,
 } from "@anomalithic/providers"
-import { EventBus, generateImpressionKey, runAgent } from "@anomalithic/runtime"
+import { EventBus, type Tool, generateImpressionKey, runAgent } from "@anomalithic/runtime"
+import { type AgentDefinition, DEFAULT_ROSTER, runSwarm } from "@anomalithic/swarm"
+import { builtinTools } from "@anomalithic/tools"
 import { Command } from "commander"
 import { loadDotenv } from "./env.js"
 import { renderTrace } from "./render.js"
@@ -68,6 +70,46 @@ program
       impressionKey: process.env.ANOMALITHIC_IMPRESSION_KEY ?? generateImpressionKey(),
       bus,
     })
+  })
+
+program
+  .command("swarm")
+  .description("Run the multi-agent swarm: an Orchestrator delegates to specialists")
+  .argument("[goal...]", "the goal for the swarm")
+  .option("-p, --provider <id>", "provider id (default: resolved from env)")
+  .option("-m, --model <id>", "model id")
+  .option("-w, --workspace <dir>", "workspace root for file/shell tools", process.cwd())
+  .action(async (goalParts: string[], opts: { provider?: string; model?: string; workspace: string }) => {
+    const goal = goalParts.join(" ").trim()
+    if (!goal) {
+      console.error("No goal given. Usage: anomalithic swarm [goal...]")
+      process.exitCode = 1
+      return
+    }
+    const id = (opts.provider ?? resolveDefaultProviderId()) as ProviderId
+    if (!PROVIDER_IDS.includes(id)) {
+      console.error(`Unknown provider: ${id}. Available: ${PROVIDER_IDS.join(", ")}`)
+      process.exitCode = 1
+      return
+    }
+    const { provider, model } = resolveModel(id, opts.model)
+    const allTools = builtinTools({ workspaceRoot: opts.workspace, web: true, shell: true })
+    const toolsFor = (agent: AgentDefinition): Tool[] =>
+      agent.toolNames ? allTools.filter((t) => agent.toolNames?.includes(t.name)) : []
+
+    const bus = new EventBus()
+    renderTrace(bus)
+    process.stdout.write(`\x1b[2m[swarm · ${provider.name} · ${model}]\x1b[0m\n`)
+    const result = await runSwarm({
+      provider,
+      model,
+      task: goal,
+      agents: DEFAULT_ROSTER,
+      toolsFor,
+      impressionKey: process.env.ANOMALITHIC_IMPRESSION_KEY ?? generateImpressionKey(),
+      bus,
+    })
+    process.stdout.write(`\n\x1b[2m— agents: ${result.agentsInvoked.join(", ") || "none"} —\x1b[0m\n`)
   })
 
 program

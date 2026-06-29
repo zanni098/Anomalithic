@@ -88,6 +88,11 @@ export type RuntimeEvent =
   | { type: "tool.result"; id: string; name: string; output: string; isError: boolean }
   | { type: "usage"; inputTokens: number; outputTokens: number }
   | { type: "turn.end"; turn: number }
+  // Multi-agent / swarm trace events
+  | { type: "agent.start"; agent: string; role: string }
+  | { type: "agent.end"; agent: string; summary: string }
+  | { type: "delegate"; from: string; to: string; task: string }
+  | { type: "handoff"; from: string; to: string }
   | { type: "done"; text: string }
   | { type: "error"; error: string }
 
