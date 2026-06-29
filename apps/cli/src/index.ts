@@ -6,6 +6,7 @@ import {
   resolveDefaultProviderId,
 } from "@anomalithic/providers"
 import { EventBus, type Tool, generateImpressionKey, runAgent } from "@anomalithic/runtime"
+import { startRuntimeServer } from "@anomalithic/server"
 import { type AgentDefinition, DEFAULT_ROSTER, runSwarm } from "@anomalithic/swarm"
 import { builtinTools } from "@anomalithic/tools"
 import { Command } from "commander"
@@ -110,6 +111,20 @@ program
       bus,
     })
     process.stdout.write(`\n\x1b[2m— agents: ${result.agentsInvoked.join(", ") || "none"} —\x1b[0m\n`)
+  })
+
+program
+  .command("serve")
+  .description("Run the local HTTP runtime API (used by the web and desktop apps)")
+  .option("-P, --port <n>", "port", "4517")
+  .option("-w, --workspace <dir>", "workspace root for file/shell tools", process.cwd())
+  .action(async (opts: { port: string; workspace: string }) => {
+    const port = Number(opts.port)
+    await startRuntimeServer(port, {
+      workspaceRoot: opts.workspace,
+      impressionKey: process.env.ANOMALITHIC_IMPRESSION_KEY,
+    })
+    console.log(`Anomalithic serve · http://127.0.0.1:${port}  (GET /health, /agents · POST /run, /swarm)`)
   })
 
 program
