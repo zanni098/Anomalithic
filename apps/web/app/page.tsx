@@ -198,7 +198,7 @@ export default function Home() {
         }}
       >
         <span>Built in the open · Apache-2.0 runtime</span>
-        <span className="mono">v0.1.0</span>
+        <span className="mono">v0.2.0</span>
       </footer>
     </main>
   )

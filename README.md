@@ -21,7 +21,7 @@ plans and delegates; specialists run in parallel, call tools, and hand off; ever
 thinking window mints a **signed impression** (the trust anchor for a thinking-time
 ad layer, kept as a placeholder in v1).
 
-> **v0.1.0 — greenfield rebuild.** This is a from-scratch rewrite. Architecture and UI
+> **v0.2.0 — greenfield rebuild.** This is a from-scratch rewrite (superseding releases through v0.1.4). Architecture and UI
 > are informed by two references (both MIT): **OpenSwarm** (orchestrator + specialists,
 > SendMessage/Handoff) and **opencode** (typed tool contract, subagent-as-child-session,
 > one-runtime-many-surfaces). See [ARCHITECTURE_NOTES.md](./ARCHITECTURE_NOTES.md).

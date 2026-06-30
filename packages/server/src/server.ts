@@ -103,7 +103,7 @@ export function createRuntimeServer(opts: RuntimeServerOptions = {}): Server {
     const url = new URL(req.url ?? "/", "http://localhost")
     try {
       if (req.method === "GET" && url.pathname === "/health")
-        return json(res, { ok: true, name: "anomalithic", version: "0.1.0" })
+        return json(res, { ok: true, name: "anomalithic", version: "0.2.0" })
       if (req.method === "GET" && url.pathname === "/agents") {
         return json(res, { agents: DEFAULT_ROSTER.map(({ systemPrompt: _p, ...rest }) => rest) })
       }

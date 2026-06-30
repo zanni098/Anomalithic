@@ -1,6 +1,6 @@
 {
   "name": "@anomalithic/desktop",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Anomalithic desktop — Tauri shell rendering the web UI over the local runtime.",

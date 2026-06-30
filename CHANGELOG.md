@@ -3,11 +3,11 @@
 All notable changes to Anomalithic are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
-## [0.1.0] — 2026-06-30
+## [0.2.0] — 2026-06-30
 
-Greenfield rebuild into a functional, premium **multi-agent** harness. The pre-rebuild
-runtime (a single-agent monorepo at `0.0.0`) was replaced; only the proven
-signed-impression trust anchor and the frozen specs were carried forward.
+Greenfield rebuild into a functional, premium **multi-agent** harness. Supersedes the
+prior line of releases (through `v0.1.4`); only the proven signed-impression trust
+anchor and the frozen specs were carried forward.
 
 ### Added
 - **Runtime** (`@anomalithic/runtime`): provider-agnostic agent loop with agent-defined

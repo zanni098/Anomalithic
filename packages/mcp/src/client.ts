@@ -26,7 +26,7 @@ export async function connectMcp(config: McpServerConfig): Promise<McpConnection
     args: config.args ?? [],
     env: { ...(process.env as Record<string, string>), ...config.env },
   })
-  const client = new Client({ name: "anomalithic", version: "0.1.0" }, { capabilities: {} })
+  const client = new Client({ name: "anomalithic", version: "0.2.0" }, { capabilities: {} })
   await client.connect(transport)
 
   const listed = (await client.listTools()) as { tools: McpToolListItem[] }
