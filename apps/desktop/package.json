@@ -1,14 +1,15 @@
 {
   "name": "@anomalithic/desktop",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Anomalithic desktop app (Tauri) — Windows, macOS, Linux.",
+  "type": "module",
+  "description": "Anomalithic desktop — Tauri shell rendering the web UI over the local runtime.",
   "scripts": {
-    "tauri": "tauri",
     "dev": "tauri dev",
-    "build": "tauri build"
+    "tauri:build": "tauri build",
+    "tauri": "tauri"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.1.0"
+    "@tauri-apps/cli": "^2.2.0"
   }
 }

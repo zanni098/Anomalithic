@@ -1,0 +1,22 @@
+{
+  "name": "@anomalithic/cli",
+  "version": "0.2.0",
+  "type": "module",
+  "license": "Apache-2.0",
+  "bin": {
+    "anomalithic": "./dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anomalithic/providers": "workspace:*",
+    "@anomalithic/runtime": "workspace:*",
+    "@anomalithic/server": "workspace:*",
+    "@anomalithic/swarm": "workspace:*",
+    "@anomalithic/tools": "workspace:*",
+    "commander": "^12.1.0"
+  }
+}

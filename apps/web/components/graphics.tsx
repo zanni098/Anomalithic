@@ -1,93 +1,101 @@
-/** Small, hand-drawn SVG/HTML graphics — kept restrained and editorial. */
+"use client"
 
-const MODELS = ["Claude", "GPT", "Llama", "Qwen", "DeepSeek", "Ollama", "OpenRouter"];
+import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
 
-export function ModelRow() {
+/** The brand mark: an "abnormal stone" monolith with a dotted face + accent edge. */
+export function Monolith({ size = 64, thinking = false }: { size?: number; thinking?: boolean }) {
   return (
-    <div className="chips">
-      {MODELS.map((m) => (
-        <span className="chip" key={m}>
-          {m}
-        </span>
-      ))}
-    </div>
-  );
+    <motion.svg
+      width={size}
+      height={size * 1.3}
+      viewBox="0 0 64 84"
+      fill="none"
+      aria-hidden
+      animate={thinking ? { scale: [1, 1.05, 1] } : { scale: 1 }}
+      transition={thinking ? { duration: 1.8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" } : {}}
+    >
+      <title>Anomalithic monolith</title>
+      <defs>
+        <linearGradient id="mono-face" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#2a241b" />
+          <stop offset="1" stopColor="#0f0c08" />
+        </linearGradient>
+        <pattern id="mono-dots" width="6" height="6" patternUnits="userSpaceOnUse">
+          <circle cx="1.2" cy="1.2" r="1.1" fill="rgba(219,117,68,0.22)" />
+        </pattern>
+      </defs>
+      {/* accent glow edge */}
+      <path
+        d="M14 10 Q32 0 50 10 L52 80 Q32 86 12 80 Z"
+        fill="#db7544"
+        opacity="0.5"
+        transform="translate(1.5 1.5)"
+      />
+      {/* slab */}
+      <path
+        d="M14 10 Q32 0 50 10 L52 80 Q32 86 12 80 Z"
+        fill="url(#mono-face)"
+        stroke="#000"
+        strokeOpacity="0.4"
+      />
+      <path d="M14 10 Q32 0 50 10 L52 80 Q32 86 12 80 Z" fill="url(#mono-dots)" />
+      {/* a single bright fracture line */}
+      <path
+        d="M30 14 L36 44 L28 52 L34 78"
+        stroke="#db7544"
+        strokeWidth="1.4"
+        strokeOpacity="0.85"
+        fill="none"
+      />
+    </motion.svg>
+  )
 }
 
-const LAYERS = [
-  { name: "kernel", note: "composes everything below", kernel: true },
-  { name: "providers", note: "any open or closed LLM" },
-  { name: "tools · mcp", note: "local tools + MCP servers" },
-  { name: "skills", note: "Claude SKILL.md + Codex AGENTS.md" },
-  { name: "hooks", note: "lifecycle gates" },
-  { name: "memory", note: "cross-session recall" },
-  { name: "orchestrator", note: "teams of agents" },
-  { name: "security", note: "redaction · permissions · sandbox" },
-];
-
-export function StackDiagram() {
+/** Full "agent is thinking" state: breathing monolith + the ad-while-thinking placeholder. */
+export function ThinkingState({ label = "thinking…" }: { label?: string }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      {LAYERS.map((l) => (
-        <div
-          key={l.name}
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 12,
-            padding: "13px 16px",
-            borderRadius: 10,
-            border: "1px solid var(--line)",
-            background: l.kernel ? "color-mix(in srgb, var(--clay) 12%, var(--paper))" : "var(--paper)",
-            borderColor: l.kernel ? "var(--clay)" : "var(--line)",
-          }}
-        >
-          <span className="mono" style={{ fontSize: "0.86rem", color: "var(--ink)" }}>
-            {l.name}
-          </span>
-          <span style={{ color: "var(--ink-soft)", fontSize: "0.86rem" }}>{l.note}</span>
-        </div>
-      ))}
+    <div style={{ display: "flex", alignItems: "center", gap: "0.9rem" }}>
+      <Monolith size={26} thinking />
+      <div style={{ display: "flex", gap: 5 }}>
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            style={{ width: 7, height: 7, borderRadius: 99, background: "var(--accent)" }}
+            animate={{ opacity: [0.25, 1, 0.25], y: [0, -3, 0] }}
+            transition={{ duration: 1.1, repeat: Number.POSITIVE_INFINITY, delay: i * 0.18 }}
+          />
+        ))}
+      </div>
+      <span className="mono" style={{ fontSize: "0.8rem", color: "var(--text-soft)" }}>
+        {label}
+      </span>
     </div>
-  );
+  )
 }
 
-export function SplitDonut() {
-  // 50/50 donut: half clay (platform), half sage (watcher).
-  const r = 54;
-  const c = 2 * Math.PI * r;
+/** Light/dark toggle persisted to localStorage. */
+export function ThemeToggle() {
+  const [theme, setTheme] = useState<"light" | "dark">("light")
+  useEffect(() => {
+    const saved = (localStorage.getItem("anom-theme") as "light" | "dark") || "light"
+    setTheme(saved)
+  }, [])
+  const flip = () => {
+    const next = theme === "light" ? "dark" : "light"
+    setTheme(next)
+    document.documentElement.dataset.theme = next
+    localStorage.setItem("anom-theme", next)
+  }
   return (
-    <svg viewBox="0 0 160 160" width="180" height="180" aria-label="50/50 split">
-      <circle cx="80" cy="80" r={r} fill="none" stroke="var(--clay)" strokeWidth="20"
-        strokeDasharray={`${c / 2} ${c / 2}`} transform="rotate(-90 80 80)" />
-      <circle cx="80" cy="80" r={r} fill="none" stroke="var(--sage)" strokeWidth="20"
-        strokeDasharray={`${c / 2} ${c / 2}`} strokeDashoffset={-c / 2} transform="rotate(-90 80 80)" />
-      <text x="80" y="76" textAnchor="middle" className="serif" fontSize="26" fill="var(--ink)">50/50</text>
-      <text x="80" y="98" textAnchor="middle" className="mono" fontSize="9" fill="var(--ink-soft)">
-        SPLIT
-      </text>
-    </svg>
-  );
-}
-
-const FLOW = [
-  { k: "01", t: "Agent thinks", d: "a real provider round-trip opens a thinking window" },
-  { k: "02", t: "Signed impression", d: "the runtime mints an HMAC-signed proof" },
-  { k: "03", t: "Verify", d: "the ledger checks signature + nonce + dwell" },
-  { k: "04", t: "Split 50/50", d: "watcher and platform each credited in USDC" },
-];
-
-export function ImpressionFlow() {
-  return (
-    <div className="grid cols-2" style={{ gap: 14 }}>
-      {FLOW.map((s) => (
-        <div key={s.k} className="card" style={{ padding: 22 }}>
-          <span className="mono clay" style={{ fontSize: "0.82rem" }}>{s.k}</span>
-          <h3 style={{ fontSize: "1.12rem", margin: "8px 0 6px" }}>{s.t}</h3>
-          <p style={{ fontSize: "0.92rem" }}>{s.d}</p>
-        </div>
-      ))}
-    </div>
-  );
+    <button
+      type="button"
+      className="btn"
+      onClick={flip}
+      aria-label="Toggle theme"
+      style={{ padding: "0.5rem 0.7rem" }}
+    >
+      {theme === "light" ? "◐" : "◑"}
+    </button>
+  )
 }

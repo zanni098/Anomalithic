@@ -2,106 +2,61 @@
 
 # ⬛ Anomalithic
 
-### One open-core, model-agnostic agent runtime to rule them all.
+### One open-core, model-agnostic **multi-agent** runtime to rule them all.
 
-[**Live site →**](https://anomalithic.vercel.app) &nbsp;·&nbsp; [Architecture](./ARCHITECTURE.md) &nbsp;·&nbsp; [Roadmap](./ROADMAP.md) &nbsp;·&nbsp; [Ad spec](./docs/specs/thinking-impressions.md)
+[Architecture notes](./ARCHITECTURE_NOTES.md) · [Audit](./AUDIT.md) · [Changelog](./CHANGELOG.md)
 
-[![CI](https://github.com/zanni098/Anomalithic/actions/workflows/ci.yml/badge.svg)](https://github.com/zanni098/Anomalithic/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
-![Models](https://img.shields.io/badge/models-Claude%20·%20Gemini%20·%20GPT%20·%20Llama%20·%20Ollama-d97757)
-
-<a href="https://anomalithic.vercel.app"><img src="./docs/media/home.png" alt="Anomalithic — one agent to rule them all" width="900" /></a>
+![Models](https://img.shields.io/badge/models-Free%20Router%20·%20Claude%20·%20GPT%20·%20Gemini%20·%20Ollama-c2603a)
+![Tests](https://img.shields.io/badge/tests-41%20passing-4caf7d)
 
 </div>
 
 ---
 
-Anomalithic is an AI agent runtime designed to match the capability of tools like
-Claude Code while staying **provider-agnostic** and **self-hostable**. It runs for
-minutes or days, spawns teams of sub-agents, speaks MCP, loads **Claude *and* Codex
-skills**, fires lifecycle hooks, remembers across sessions — and funds itself with a
-thinking-time ad network that pays watchers **50/50** in stablecoin.
+Anomalithic is a premium harness around **any** model: a swarm of specialists, real
+tools, durable sessions, MCP, and a **trace you can watch think**. An Orchestrator
+plans and delegates; specialists run in parallel, call tools, and hand off; every
+thinking window mints a **signed impression** (the trust anchor for a thinking-time
+ad layer, kept as a placeholder in v1).
 
-The name is *anomaly* + *-lithic* (stone / monolith): the one monolithic agent.
+> **v0.2.0 — greenfield rebuild.** This is a from-scratch rewrite (superseding releases through v0.1.4). Architecture and UI
+> are informed by two references (both MIT): **OpenSwarm** (orchestrator + specialists,
+> SendMessage/Handoff) and **opencode** (typed tool contract, subagent-as-child-session,
+> one-runtime-many-surfaces). See [ARCHITECTURE_NOTES.md](./ARCHITECTURE_NOTES.md).
 
-## ✦ The killer feature — get paid while agents think
+## ✦ What works today
 
-<img src="./docs/media/earn.png" alt="Thinking-time ads — 50/50 split" width="900" />
+- **Provider-agnostic agent loop** — gather → think → act → observe, with agent-defined
+  thinking windows that mint signed impressions on any model.
+- **Free Models Router** — zero-cost default that routes around rate-limited free
+  OpenRouter models; plus Anthropic, OpenAI, Gemini, Ollama, and a Mock provider.
+- **Multi-agent swarm** — an Orchestrator + 8 specialists (Researcher, Coder, Analyst,
+  Writer, Slides, Docs, Image, Video) with `delegate`, `delegate_parallel`, and `handoff`.
+- **Real tools** — path-confined fs, guarded shell, web_fetch, plus **MCP** servers
+  exposed as agent tools (official MCP SDK).
+- **Durable sessions** + permission rulesets (subagent narrowing).
+- **Local runtime API** — `serve` streams the trace as SSE; a typed **SDK** consumes it.
+- **Premium UI** — a Next.js web app (live swarm console, design system, motion) and a
+  Tauri desktop shell rendering the same UI.
 
-Advertisers pay a monthly fee to place a small link + short blurb that appears
-**only while the agent is thinking**. Watchers earn for those impressions, split
-**50/50** between the platform and the watcher, paid in **USDC on Base**. Always
-toggleable.
+## ✦ Packages
 
-The trust anchor already ships: every thinking window mints a **runtime-signed
-impression** (`packages/core/src/impression.ts`) that the ad ledger verifies before
-crediting a watcher — impressions can only be minted by the runtime, never spoofed by
-a client timer. See the frozen [impression spec](./docs/specs/thinking-impressions.md).
-
-## ✦ Loop engineering — built in
-
-> Stop prompting. Start writing loops.
-
-Anomalithic ships the [`loop-engineering`](./skills/loop-engineering) skill out of the
-box. A prompt is you, babysitting every turn. A **loop** takes you out of the chair:
-write the goal, the check, and the stop once — the agent runs the ask–answer–correct
-cycle on its own until the work clears a verified bar.
-
-```console
-$ anomalithic skills
-▣ loop-engineering  stop prompting — write loops that verify themselves
-1 skill(s) · ▣ claude · ▢ codex
-```
-
-The skill covers all three levels — the one-line `/goal` loop, a copy-paste 5-step loop,
-and the 6-part 24/7 system — plus the part that makes or breaks every loop: **honest
-verification** (separate the checker from the maker, check against reality, grade
-adversarially). Also published standalone at
-[zanni098/loop-engineering-skill](https://github.com/zanni098/loop-engineering-skill).
-
-## ✦ Build agents visually — drag, drop, wire, export
-
-<a href="https://anomalithic.vercel.app/builder"><img src="./docs/media/builder.png" alt="Drag-and-drop agent builder" width="900" /></a>
-
-Compose providers, prompts, tools, code, and sub-agents on a canvas, wire them
-together, and export an Anomalithic agent definition — **[try it live](https://anomalithic.vercel.app/builder)**. No code required, but code is a first-class node.
-
-## ✦ The whole agent, not a wrapper
-
-Ten focused, open-source packages compose into one capable agent — each tested,
-typed, and small enough to read in a sitting.
-
-| Package | What it does |
+| Package | Role |
 |---|---|
-| `@anomalithic/providers` | Any model — Anthropic, OpenAI, OpenRouter, Ollama, or any OpenAI-compatible endpoint |
-| `@anomalithic/core` | Agent loop, typed event bus, **signed thinking-impressions**, tool registry |
-| `@anomalithic/mcp` | Model Context Protocol stdio client + tool adapter |
-| `@anomalithic/skills` | Loads Claude `SKILL.md` **and** Codex `AGENTS.md` into one skill system — ships the built-in [`loop-engineering`](./skills/loop-engineering) skill |
-| `@anomalithic/hooks` | Lifecycle hooks: SessionStart, Pre/PostToolUse, Stop, Thinking |
-| `@anomalithic/orchestrator` | Durable task store, atomic checkout, dependency graph, budgets — run for hours/days |
-| `@anomalithic/memory` | File-backed cross-session memory + recall |
-| `@anomalithic/security` | Secret redaction, permission policy, path sandbox, audit log |
-| `@anomalithic/os` | The agentic-OS **kernel** that composes every package into one runtime |
-| `@anomalithic/cli` | The `anomalithic` CLI — `run`, `skills`, `memory`, `mcp` |
-
-The product, running — a quiet ad shows only during the thinking window, and each
-window mints one signed impression:
-
-```console
-$ anomalithic run -p google "explain MCP in one sentence" --ads
-✦ thinking…
-💡 Your ad here while agents think — https://anomalithic.vercel.app/ads
-MCP (Model Context Protocol) is an open standard that lets AI agents
-call external tools and data sources over a uniform JSON-RPC interface.
-[google:gemini-2.5-flash] 1 turn(s), 12+8 tokens, 1 impression(s)
-
-$ anomalithic serve -p mock
-Anomalithic serve · http://127.0.0.1:4517 · mock:mock
-
-$ curl -s http://127.0.0.1:4517/health
-{"ok":true,"provider":"mock","model":"mock"}
-```
+| `@anomalithic/impressions` | Signed thinking-impression trust anchor |
+| `@anomalithic/runtime` | Agent loop, typed event bus, provider/tool interfaces |
+| `@anomalithic/providers` | Free Models Router + OpenAI-compatible + Anthropic + Mock |
+| `@anomalithic/tools` | Built-in fs / shell / web tools + registry |
+| `@anomalithic/sessions` | Durable session store + permission rulesets |
+| `@anomalithic/swarm` | Orchestrator + specialists; delegate / parallel / handoff |
+| `@anomalithic/mcp` | MCP stdio client → MCP tools as agent tools |
+| `@anomalithic/server` | Local HTTP runtime API (SSE streaming) |
+| `@anomalithic/sdk` | Typed client for the runtime API |
+| `apps/cli` | `anomalithic` CLI — `run`, `swarm`, `serve`, `models` |
+| `apps/web` | Premium Next.js UI (swarm console + design system) |
+| `apps/desktop` | Tauri desktop shell |
 
 ## ✦ Quickstart
 
@@ -109,53 +64,40 @@ $ curl -s http://127.0.0.1:4517/health
 pnpm install
 pnpm build
 
-# Offline demo (no API key needed):
-node packages/cli/dist/index.js run -p mock "hello"
+# Offline demo — no key needed (mock provider drives a full swarm):
+node apps/cli/dist/index.js swarm -p mock "summarize the plan"
 
-# List the built-in skills (includes loop-engineering):
-node packages/cli/dist/index.js skills
+# Real models — copy .env.example to .env and add a key:
+cp .env.example .env          # OPENROUTER_API_KEY for the free router, or ANTHROPIC/OPENAI/...
+node apps/cli/dist/index.js swarm "Research MCP and write a 3-sentence explainer"
 
-# Real model — copy .env.example to .env and add a key:
-cp .env.example .env            # set ANTHROPIC_API_KEY or OPENAI_API_KEY
-node packages/cli/dist/index.js run "explain MCP in one sentence"
-
-# Point at any OpenAI-compatible endpoint (OpenRouter, Ollama, local):
-ANOMALITHIC_PROVIDER=openai OPENAI_BASE_URL=http://localhost:11434/v1 \
-  node packages/cli/dist/index.js run -m llama3.1 "hi"
+# One agent, one shot:
+node apps/cli/dist/index.js run "explain MCP in one sentence"
 ```
 
-## ✦ Desktop app
+### The premium UI
 
-<img src="./docs/media/desktop.png" alt="Anomalithic Desktop — Claude Code–style UI with session chat and model selector" width="900" />
+```bash
+node apps/cli/dist/index.js serve     # runtime API on :4517
+pnpm --filter @anomalithic/web dev    # web console on :4520
+```
 
-Native shell ([`apps/desktop`](./apps/desktop)) — chat with the agent, switch models, browse memory and skills, styled to match the Claude Code aesthetic. The UI calls the local `anomalithic serve` runtime so **everything runs on your machine**.  A [release pipeline](./.github/workflows/release.yml) builds `.msi` / `.dmg` / `.deb` / AppImage on every tag.
-
-## ✦ Platforms
-
-- **CLI + TUI** — `anomalithic run`, `chat`, full-screen `tui`, `serve` (local HTTP runtime API), plus `skills` / `memory` / `mcp` / `plugins` / `sessions`
-- **Desktop app** — Tauri shell with a Claude Code–style UI; runtime sidecar via `anomalithic serve`; release pipeline builds native installers
-- **Messaging gateway** — Telegram, Slack, Discord adapters (WhatsApp / Signal roadmap)
-- **Mobile** — _(later)_
-
-See the full plan in [ROADMAP.md](./ROADMAP.md).
+Open <http://localhost:4520/console>, give the Orchestrator a goal, and watch the swarm
+delegate, call tools, and synthesize — streamed live.
 
 ## ✦ Develop
 
 ```bash
-pnpm build        # build all packages (turbo)
-pnpm test         # run all tests (vitest)
-pnpm typecheck    # tsc --noEmit across the workspace
-pnpm lint         # biome check
+pnpm build       # build all packages (turbo + tsup)
+pnpm test        # vitest — 41 tests
+pnpm typecheck   # tsc --noEmit across the workspace
+pnpm lint        # biome
 ```
-
-The website lives in [`apps/web`](./apps/web) (Next.js, deployed to Vercel).
 
 ## ✦ License
 
-**Open-core.** The runtime packages and the desktop shell are Apache-2.0
-(see [LICENSE](./LICENSE)); the hosted ad marketplace, payout wallet, and advertiser
-portal are proprietary. Details in [LICENSING.md](./LICENSING.md).
+**Open-core.** The runtime packages, apps, and desktop shell are Apache-2.0
+(see [LICENSE](./LICENSE)); the future hosted ad marketplace / payout wallet remain
+proprietary ([LICENSING.md](./LICENSING.md)).
 
-<div align="center">
-<sub>Built in the open · <a href="https://anomalithic.vercel.app">anomalithic.vercel.app</a></sub>
-</div>
+<div align="center"><sub>Built in the open.</sub></div>

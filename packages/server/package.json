@@ -1,0 +1,26 @@
+{
+  "name": "@anomalithic/server",
+  "version": "0.2.0",
+  "type": "module",
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anomalithic/providers": "workspace:*",
+    "@anomalithic/runtime": "workspace:*",
+    "@anomalithic/sessions": "workspace:*",
+    "@anomalithic/swarm": "workspace:*",
+    "@anomalithic/tools": "workspace:*"
+  }
+}

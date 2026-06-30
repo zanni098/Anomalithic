@@ -1,52 +1,37 @@
-import type { Metadata } from "next";
-import { Hanken_Grotesk, JetBrains_Mono, Newsreader } from "next/font/google";
-import type { ReactNode } from "react";
-import { Footer } from "../components/Footer";
-import { Nav } from "../components/Nav";
-import "./globals.css";
+import type { Metadata } from "next"
+import { Fraunces, Hanken_Grotesk, JetBrains_Mono } from "next/font/google"
+import "./globals.css"
 
-const display = Newsreader({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-display",
-  display: "swap",
-});
-
-const sans = Hanken_Grotesk({
+  variable: "--font-fraunces",
+  axes: ["SOFT", "WONK", "opsz"],
+})
+const hanken = Hanken_Grotesk({
   subsets: ["latin"],
+  variable: "--font-hanken",
   weight: ["400", "500", "600", "700"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-mono",
-  display: "swap",
-});
+})
+const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", weight: ["400", "500", "600"] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://anomalithic.vercel.app"),
   title: "Anomalithic — one agent to rule them all",
-  description:
-    "An open-core, model-agnostic AI agent runtime. MCP, skills, hooks, multi-agent, cross-session memory, a visual agent builder — and a thinking-time ad network that pays watchers 50/50.",
-  openGraph: {
-    title: "Anomalithic",
-    description: "One open-core, model-agnostic agent runtime to rule them all.",
-    type: "website",
-  },
-};
+  description: "An open-core, model-agnostic multi-agent runtime. Premium harness, live swarm traces.",
+}
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
-      <body>
-        <Nav />
-        {children}
-        <Footer />
-      </body>
+    <html lang="en" data-theme="light" suppressHydrationWarning>
+      <head>
+        {/* Restore the user's saved theme before paint to avoid a flash. */}
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: tiny pre-paint theme bootstrap
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('anom-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}`,
+          }}
+        />
+      </head>
+      <body className={`${fraunces.variable} ${hanken.variable} ${mono.variable}`}>{children}</body>
     </html>
-  );
+  )
 }

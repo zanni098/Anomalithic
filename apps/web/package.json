@@ -1,27 +1,23 @@
 {
   "name": "@anomalithic/web",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Anomalithic marketing site.",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 4520",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "start": "next start -p 4520",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@xyflow/react": "^12.3.6",
+    "@anomalithic/sdk": "workspace:*",
     "framer-motion": "^11.15.0",
-    "next": "^15.5.19",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "typescript": "^5.7.3"
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3"
   }
 }

@@ -1,9 +1,9 @@
 {
   "name": "anomalithic",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Anomalithic — one open-core, model-agnostic agent runtime to rule them all.",
+  "description": "Anomalithic — one open-core, model-agnostic multi-agent runtime to rule them all.",
   "license": "Apache-2.0",
   "packageManager": "pnpm@10.33.0",
   "engines": {
@@ -12,14 +12,16 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "test": "turbo run test",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "turbo run typecheck",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "anomalithic": "node packages/cli/dist/index.js"
+    "anomalithic": "node apps/cli/dist/index.js"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.0",
     "tsup": "^8.3.5",
     "turbo": "^2.5.0",
     "typescript": "^5.7.3",
