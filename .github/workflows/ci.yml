@@ -21,16 +21,14 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      # The runtime packages are the unit of CI. The web app (Vercel) and the
-      # desktop app (tauri release workflow) are validated by their own pipelines.
       - name: Lint
-        run: pnpm exec biome check packages
+        run: pnpm lint
 
       - name: Typecheck
-        run: pnpm typecheck --filter "./packages/*"
+        run: pnpm typecheck
 
       - name: Build
-        run: pnpm build --filter "./packages/*"
+        run: pnpm build
 
       - name: Test
-        run: pnpm test --filter "./packages/*"
+        run: pnpm test
