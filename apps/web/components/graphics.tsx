@@ -15,6 +15,7 @@ export function Monolith({ size = 64, thinking = false }: { size?: number; think
       animate={thinking ? { scale: [1, 1.05, 1] } : { scale: 1 }}
       transition={thinking ? { duration: 1.8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" } : {}}
     >
+      <title>Anomalithic monolith</title>
       <defs>
         <linearGradient id="mono-face" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#2a241b" />
