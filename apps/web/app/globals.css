@@ -1,0 +1,206 @@
+/* ============================================================================
+   Anomalithic — "Lithic warmth" design system
+   Tokens (color, type, space, radius, shadow), texture, motion. Dark = deep stone.
+   ============================================================================ */
+
+:root {
+  /* — Surfaces (warm bone / sand paper) — */
+  --stone-50: #faf7f0;
+  --stone-100: #f4efe4;
+  --stone-200: #e9e1d2;
+  --stone-300: #d8ccb8;
+  --stone-400: #b6a98f;
+  --ink-900: #18140e;
+  --ink-700: #3a3328;
+  --ink-500: #6b6051;
+
+  /* — Molten terracotta accent (matches the CLI trace) — */
+  --accent: #c2603a;
+  --accent-bright: #db7544;
+  --accent-soft: #e8a07e;
+
+  /* — Specialist hues (mirror the swarm roster) — */
+  --hue-research: #3a7ec2;
+  --hue-code: #4caf7d;
+  --hue-analyst: #9b6dc2;
+  --hue-writer: #c2a23a;
+
+  /* — Semantic — */
+  --bg: var(--stone-100);
+  --bg-raised: var(--stone-50);
+  --bg-sunken: var(--stone-200);
+  --text: var(--ink-900);
+  --text-soft: var(--ink-500);
+  --line: color-mix(in oklab, var(--ink-900) 12%, transparent);
+  --line-strong: color-mix(in oklab, var(--ink-900) 22%, transparent);
+
+  /* — Type — */
+  --font-display: var(--font-fraunces), "Times New Roman", serif;
+  --font-body: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  /* — Radius / shadow / space — */
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-xl: 32px;
+  --shadow-sm: 0 1px 2px rgba(24, 20, 14, 0.06), 0 2px 8px rgba(24, 20, 14, 0.04);
+  --shadow-md: 0 4px 14px rgba(24, 20, 14, 0.1), 0 12px 40px rgba(24, 20, 14, 0.08);
+  --shadow-lg: 0 18px 60px rgba(24, 20, 14, 0.18);
+  --ring: 0 0 0 3px color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+[data-theme="dark"] {
+  --stone-50: #1c1813;
+  --stone-100: #16120d;
+  --stone-200: #211c15;
+  --stone-300: #2c261d;
+  --stone-400: #4a4233;
+  --ink-900: #f3ecdf;
+  --ink-700: #d8ccb8;
+  --ink-500: #9a8e79;
+  --bg: var(--stone-100);
+  --bg-raised: var(--stone-50);
+  --bg-sunken: #100d09;
+  --text: var(--ink-900);
+  --text-soft: var(--ink-500);
+  --line: color-mix(in oklab, var(--ink-900) 12%, transparent);
+  --line-strong: color-mix(in oklab, var(--ink-900) 22%, transparent);
+  --accent: #db7544;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.6);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Warm halftone dot texture + subtle vertical wash */
+  background-image: radial-gradient(
+      color-mix(in oklab, var(--ink-900) 6%, transparent) 1px,
+      transparent 1.4px
+    ), linear-gradient(180deg, color-mix(in oklab, var(--accent) 5%, transparent), transparent 38%);
+  background-size: 22px 22px, 100% 100%;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 540;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  margin: 0;
+  font-optical-sizing: auto;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--stone-50);
+}
+
+/* Grain overlay — applied to <body> via ::after for filmic depth */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* — Reusable primitives — */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 560;
+  font-size: 0.95rem;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-raised);
+  color: var(--text);
+  border-radius: var(--r-md);
+  padding: 0.7rem 1.1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.btn:active {
+  transform: translateY(0);
+}
+.btn-accent {
+  background: var(--accent);
+  color: #fff;
+  border-color: transparent;
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.card {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-soft);
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+@keyframes drift {
+  to {
+    background-position: 0 -22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
