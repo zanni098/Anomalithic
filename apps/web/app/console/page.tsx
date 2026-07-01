@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Monolith, ThemeToggle } from "../../components/graphics"
+import { Modal, Toaster, toast } from "../../components/overlay"
 import { TraceView } from "../../components/trace"
 import { checkRuntime, useSwarm } from "../../lib/useSwarm"
 
@@ -20,9 +21,22 @@ export default function ConsolePage() {
   const [provider, setProvider] = useState("free-router")
   const [online, setOnline] = useState<boolean | null>(null)
 
+  const [impOpen, setImpOpen] = useState(false)
+  const impressions = events.flatMap((e) => (e.type === "thinking.start" ? [e.impression] : []))
+
   useEffect(() => {
     checkRuntime().then(setOnline)
   }, [])
+
+  // Toast when a run finishes or errors.
+  const wasRunning = useRef(false)
+  useEffect(() => {
+    if (wasRunning.current && !running) {
+      if (error) toast(error, "error")
+      else if (finalText) toast("Swarm complete", "success")
+    }
+    wasRunning.current = running
+  }, [running, finalText, error])
 
   const submit = () => {
     if (goal.trim() && !running) start("swarm", goal.trim(), provider)
@@ -57,6 +71,16 @@ export default function ConsolePage() {
             />
             {online === null ? "checking runtime" : online ? "runtime online" : "runtime offline"}
           </span>
+          {impressions.length > 0 && (
+            <button
+              type="button"
+              className="btn"
+              style={{ padding: "0.5rem 0.7rem", fontSize: "0.8rem" }}
+              onClick={() => setImpOpen(true)}
+            >
+              ⬛ {impressions.length} impression{impressions.length === 1 ? "" : "s"}
+            </button>
+          )}
           <ThemeToggle />
         </div>
       </header>
@@ -199,6 +223,23 @@ export default function ConsolePage() {
           {error}
         </div>
       )}
+
+      <Modal open={impOpen} onClose={() => setImpOpen(false)} title="Signed thinking-impressions">
+        <p style={{ color: "var(--text-soft)", marginTop: 0, fontSize: "0.9rem" }}>
+          Each thinking window mints an HMAC-signed proof the agent genuinely reasoned — the
+          redeemable unit for the thinking-time ad layer. It cannot be spoofed by a client timer.
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", maxHeight: 320, overflowY: "auto" }}>
+          {impressions.map((imp) => (
+            <div key={imp.id} className="mono" style={{ fontSize: "0.72rem", padding: "0.6rem 0.75rem", border: "1px solid var(--line)", borderRadius: "var(--r-md)", background: "var(--bg-sunken)" }}>
+              <div style={{ color: "var(--accent)" }}>seq #{imp.seq} · turn {imp.turn}</div>
+              <div style={{ color: "var(--text-soft)", wordBreak: "break-all", marginTop: 4 }}>sig {imp.signature.slice(0, 40)}…</div>
+            </div>
+          ))}
+        </div>
+      </Modal>
+
+      <Toaster />
     </main>
   )
 }
