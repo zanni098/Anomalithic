@@ -13,7 +13,6 @@ out/
 # rust / tauri (generated)
 target/
 apps/desktop/src-tauri/gen/
-apps/desktop/src-tauri/icons/
 
 # env / secrets
 .env
