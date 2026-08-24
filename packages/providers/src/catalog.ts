@@ -79,6 +79,10 @@ export function buildProvider(id: ProviderId, env: ProviderEnv = process.env): P
         apiKey: env.OPENROUTER_API_KEY,
         headers: OPENROUTER_HEADERS,
       })
+    default: {
+      const _exhaustive: never = id
+      throw new Error(`Unknown provider id: ${String(_exhaustive)}`)
+    }
   }
 }
 
