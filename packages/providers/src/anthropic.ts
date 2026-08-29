@@ -4,6 +4,22 @@ import { readSSE } from "./sse.js"
 const ANTHROPIC_VERSION = "2023-06-01"
 const DEFAULT_MAX_TOKENS = 4096
 
+type FinishReason = "stop" | "tool_calls" | "length" | "error"
+
+function mapStopReason(reason: unknown): FinishReason {
+  switch (reason) {
+    case "tool_use":
+      return "tool_calls"
+    case "max_tokens":
+    case "model_context_window_exceeded":
+      return "length"
+    case "refusal":
+      return "error"
+    default:
+      return "stop"
+  }
+}
+
 export interface AnthropicOptions {
   apiKey: string
   baseUrl?: string
@@ -96,6 +112,7 @@ export function anthropicProvider(opts: AnthropicOptions): Provider {
       const blocks = new Map<number, { type: string; id: string; name: string; json: string }>()
       let inputTokens = 0
       let sawToolUse = false
+      let finishReason: FinishReason = "stop"
 
       for await (const data of readSSE(res.body)) {
         let ev: any
@@ -143,18 +160,19 @@ export function anthropicProvider(opts: AnthropicOptions): Provider {
             break
           }
           case "message_delta":
+            if (ev.delta?.stop_reason) finishReason = mapStopReason(ev.delta.stop_reason)
             if (ev.usage?.output_tokens != null)
               yield { type: "usage", inputTokens, outputTokens: ev.usage.output_tokens }
             break
           case "message_stop":
-            yield { type: "done", finishReason: sawToolUse ? "tool_calls" : "stop" }
+            yield { type: "done", finishReason: sawToolUse ? "tool_calls" : finishReason }
             return
           case "error":
             yield { type: "error", error: ev.error?.message ?? "anthropic stream error" }
             return
         }
       }
-      yield { type: "done", finishReason: sawToolUse ? "tool_calls" : "stop" }
+      yield { type: "done", finishReason: sawToolUse ? "tool_calls" : finishReason }
     },
   }
 }

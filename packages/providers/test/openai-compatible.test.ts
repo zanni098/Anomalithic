@@ -81,6 +81,30 @@ describe("openAICompatibleProvider", () => {
     expect(events.at(-1)).toMatchObject({ type: "done", finishReason: "tool_calls" })
   })
 
+  test("preserves a length finish reason", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => sseResponse([JSON.stringify({ choices: [{ finish_reason: "length", delta: {} }] })])),
+    )
+    const p = openAICompatibleProvider({ id: "t", name: "T", baseUrl: "http://x/v1" })
+    const events = await collect(p.stream({ model: "m", messages: [{ role: "user", content: "x" }] }))
+
+    expect(events.at(-1)).toMatchObject({ type: "done", finishReason: "length" })
+  })
+
+  test("reports content filtering as an error finish reason", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        sseResponse([JSON.stringify({ choices: [{ finish_reason: "content_filter", delta: {} }] })]),
+      ),
+    )
+    const p = openAICompatibleProvider({ id: "t", name: "T", baseUrl: "http://x/v1" })
+    const events = await collect(p.stream({ model: "m", messages: [{ role: "user", content: "x" }] }))
+
+    expect(events.at(-1)).toMatchObject({ type: "done", finishReason: "error" })
+  })
+
   test("emits an error event on a non-ok response", async () => {
     vi.stubGlobal(
       "fetch",

@@ -14,6 +14,21 @@ export interface OpenAICompatibleOptions {
 
 type FinishReason = "stop" | "tool_calls" | "length" | "error"
 
+function mapFinishReason(reason: unknown): FinishReason {
+  switch (reason) {
+    case "tool_calls":
+    case "function_call":
+      return "tool_calls"
+    case "length":
+      return "length"
+    case "content_filter":
+    case "error":
+      return "error"
+    default:
+      return "stop"
+  }
+}
+
 interface OpenAIToolCallFragment {
   index: number
   id?: string
@@ -138,8 +153,7 @@ export function openAICompatibleProvider(opts: OpenAICompatibleOptions): Provide
             toolFrags.set(frag.index, cur)
           }
         }
-        if (choice?.finish_reason)
-          finishReason = choice.finish_reason === "tool_calls" ? "tool_calls" : "stop"
+        if (choice?.finish_reason) finishReason = mapFinishReason(choice.finish_reason)
         if (chunk.usage) {
           yield {
             type: "usage",
