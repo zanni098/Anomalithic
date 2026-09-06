@@ -22,6 +22,17 @@ function sseResponse(payloads: string[], ok = true, status = 200): Response {
   } as unknown as Response
 }
 
+function unterminatedSseResponse(payload: string): Response {
+  return new Response(
+    new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(`data: ${payload}`))
+        controller.close()
+      },
+    }),
+  )
+}
+
 async function collect(it: AsyncIterable<StreamEvent>): Promise<StreamEvent[]> {
   const out: StreamEvent[] = []
   for await (const e of it) out.push(e)
@@ -31,6 +42,18 @@ async function collect(it: AsyncIterable<StreamEvent>): Promise<StreamEvent[]> {
 afterEach(() => vi.restoreAllMocks())
 
 describe("openAICompatibleProvider", () => {
+  test("emits the final event without a trailing newline", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        unterminatedSseResponse(JSON.stringify({ choices: [{ delta: { content: "last" } }] })),
+      ),
+    )
+    const p = openAICompatibleProvider({ id: "t", name: "T", baseUrl: "http://x/v1" })
+    const events = await collect(p.stream({ model: "m", messages: [] }))
+    expect(events).toContainEqual(expect.objectContaining({ type: "text_delta", text: "last" }))
+  })
+
   test("streams reasoning, text, and usage", async () => {
     vi.stubGlobal(
       "fetch",

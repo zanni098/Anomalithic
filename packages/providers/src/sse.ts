@@ -23,6 +23,12 @@ export async function* readSSE(body: ReadableStream<Uint8Array>): AsyncGenerator
         if (data) yield data
       }
     }
+    buffer += decoder.decode()
+    const line = buffer.trim()
+    if (line.startsWith("data:")) {
+      const data = line.slice(5).trim()
+      if (data && data !== "[DONE]") yield data
+    }
   } finally {
     reader.releaseLock()
   }

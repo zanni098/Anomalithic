@@ -43,6 +43,16 @@ async function consumeSSE(res: Response, onEvent: (event: RuntimeEvent) => void)
       }
     }
   }
+  buf += dec.decode()
+  const line = buf.trim()
+  if (!line.startsWith("data:")) return
+  const data = line.slice(5).trim()
+  if (!data || data === "[DONE]") return
+  try {
+    onEvent(JSON.parse(data) as RuntimeEvent)
+  } catch {
+    // ignore malformed frames
+  }
 }
 
 /** Typed client for the Anomalithic runtime server. Used by the web and desktop apps. */
